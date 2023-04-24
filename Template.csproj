@@ -3,7 +3,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <LangVersion>11</LangVersion>
     <EnableDynamicLoading>true</EnableDynamicLoading>
-    <DefineConstants>TEMPLATE</DefineConstants>
+    <DefineConstants>PLANETS</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="GodotUtils\Snippets\VS2022\ExportNodePath.snippet" />

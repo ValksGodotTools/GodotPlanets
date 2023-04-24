@@ -1,4 +1,4 @@
-﻿namespace Template;
+﻿namespace Planets;
 
 using Godot.Collections;
 

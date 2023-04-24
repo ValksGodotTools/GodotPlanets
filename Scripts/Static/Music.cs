@@ -1,4 +1,4 @@
-﻿namespace Template;
+﻿namespace Planets;
 
 public static class Music
 {

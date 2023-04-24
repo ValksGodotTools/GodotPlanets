@@ -1,6 +1,6 @@
 using static Godot.DisplayServer;
 
-namespace Template;
+namespace Planets;
 
 public partial class UIOptionsDisplay : Control
 {

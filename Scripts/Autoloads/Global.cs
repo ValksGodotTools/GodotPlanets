@@ -10,7 +10,7 @@ global using System.Threading;
 global using System.Text.RegularExpressions;
 global using System.Threading.Tasks;
 
-namespace Template;
+namespace Planets;
 
 public partial class Global : Node
 {
