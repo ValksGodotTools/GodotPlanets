@@ -5,7 +5,17 @@ public partial class Planet : Node3D
     private void GenerateEdgePoints(Vector3 posA, Vector3 posB, int subdivisions)
     {
         World3DUtils.CreateSphere(this, posA, Colors.Orange);
-        World3DUtils.CreateSphere(this, posB, Colors.Orange);
+        //World3DUtils.CreateSphere(this, posB, Colors.Orange);
+
+        new Sphere(this, posB)
+        {
+            Color = Colors.Purple,
+            Radius = 0.5f
+        };
+
+        new Sphere(this, posB)
+            .SetColor(Colors.Purple)
+            .SetRadius(0.5f);
 
         GenerateEdgeMidPoints(posA, posB, subdivisions);
     }
@@ -45,6 +55,64 @@ public partial class Planet : Node3D
             }
         });
     }
+}
+
+public class DebugSphere : Sphere
+{
+    public DebugSphere(Node parent, Vector3 pos) : base(parent, pos)
+    {
+        SetColor(Colors.Red);
+        SetRadius(0.05f);
+    }
+}
+
+public class Sphere
+{
+    public float Radius
+    {
+        get => Mesh.Radius;
+        set => Mesh.Radius = value;
+    }
+
+    public Color Color
+    {
+        get
+        {
+            if (Mesh.Material == null)
+                return Colors.White;
+
+            return (Mesh.Material as StandardMaterial3D).AlbedoColor;
+        }
+        set
+        {
+            if (Mesh.Material == null)
+            {
+                Mesh.Material = new StandardMaterial3D
+                {
+                    AlbedoColor = value
+                };
+            }
+            else
+            {
+                (Mesh.Material as StandardMaterial3D).AlbedoColor = value;
+            }
+        }
+    }
+
+    private SphereMesh Mesh { get; }
+
+    public Sphere(Node parent, Vector3 pos)
+    {
+        Mesh = new();
+        parent.AddChild(new MeshInstance3D
+        {
+            Mesh = Mesh,
+            Position = pos
+        });
+    }
+
+    public Sphere SetColor(Color color) => this;
+    public Sphere SetRadius(float radius) => this;
 }
 
 public static class World3DUtils
