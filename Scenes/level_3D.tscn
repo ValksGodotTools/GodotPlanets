@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bmu34hfw77kcw"]
+[gd_scene load_steps=7 format=3 uid="uid://bmu34hfw77kcw"]
 
 [ext_resource type="Script" path="res://Scripts/Planet.cs" id="1_8qujs"]
 [ext_resource type="PackedScene" uid="uid://c6pism2kgjr5c" path="res://Scenes/Prefabs/popup_menu.tscn" id="1_bhqx1"]
@@ -24,11 +24,6 @@ ssao_enabled = true
 ssil_enabled = true
 glow_enabled = true
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wg280"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_ntcmi"]
-material = SubResource("StandardMaterial3D_wg280")
-
 [node name="Level" type="Node3D"]
 
 [node name="Planet" type="Node3D" parent="."]
@@ -51,6 +46,3 @@ transform = Transform3D(1, 0, 0, 0, 0.707107, -0.707107, 0, 0.707107, 0.707107, 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="popup_menu" parent="CanvasLayer" instance=ExtResource("1_bhqx1")]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("CapsuleMesh_ntcmi")
