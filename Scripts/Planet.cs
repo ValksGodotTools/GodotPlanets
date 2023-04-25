@@ -2,17 +2,38 @@ namespace Planets;
 
 public partial class Planet : Node3D
 {
+    private void GenerateEdgePoints(Vector3 posA, Vector3 posB, int subdivisions)
+    {
+        World3DUtils.CreateSphere(this, posA, Colors.Orange);
+        World3DUtils.CreateSphere(this, posB, Colors.Orange);
+
+        GenerateEdgeMidPoints(posA, posB, subdivisions);
+    }
+
+    private void GenerateEdgeMidPoints(Vector3 posA, Vector3 posB, int subdivisions)
+    {
+        var numPoints = Mathf.Max(0, (int)Mathf.Pow(2, subdivisions) - 1) + 1;
+
+        for (int i = 1; i < numPoints; i++)
+        {
+            var t = (float)(i) / (numPoints);
+            var pos = posA.Lerp(posB, t);
+
+            World3DUtils.CreateSphere(this, pos, Colors.GreenYellow);
+        }
+    }
+
     public override void _Ready()
     {
-        //GetViewport().DebugDraw = Viewport.DebugDrawEnum.Wireframe;
+        GetViewport().DebugDraw = Viewport.DebugDrawEnum.Wireframe;
 
         var icosahedron = new Icosahedron();
 
-        var pos = icosahedron.Vertices[icosahedron.Triangles[0]];
+        var pos1 = icosahedron.Vertices[icosahedron.Triangles[0]];
+        var pos2 = icosahedron.Vertices[icosahedron.Triangles[1]];
+        var pos3 = icosahedron.Vertices[icosahedron.Triangles[2]];
 
-        var sphere = World3DUtils.CreateSphere(pos, 0.1f, Colors.Green);
-
-        AddChild(sphere);
+        GenerateEdgePoints(pos1, pos2, 3);
 
         AddChild(new MeshInstance3D
         {
@@ -28,9 +49,9 @@ public partial class Planet : Node3D
 
 public static class World3DUtils
 {
-    public static MeshInstance3D CreateSphere(Vector3 pos, float radius = 1, Color? color = null, int rings = 32)
+    public static void CreateSphere(Node parent, Vector3 pos, Color? color = null, float radius = 0.05f, int rings = 32)
     {
-        return new MeshInstance3D
+        var meshInstance = new MeshInstance3D
         {
             Mesh = new SphereMesh
             {
@@ -44,6 +65,8 @@ public static class World3DUtils
             },
             Position = pos
         };
+
+        parent.AddChild(meshInstance);
     }
 
     public static Mesh CreateMesh(Vector3[] vertices, int[] indices)
