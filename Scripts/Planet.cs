@@ -4,26 +4,60 @@ public partial class Planet : Node3D
 {
     public override void _Ready()
     {
-        GetViewport().DebugDraw = Viewport.DebugDrawEnum.Wireframe;
+        //GetViewport().DebugDraw = Viewport.DebugDrawEnum.Wireframe;
 
         var icosahedron = new Icosahedron();
 
+        var pos = icosahedron.Vertices[icosahedron.Triangles[0]];
+
+        var sphere = World3DUtils.CreateSphere(pos, 0.1f, Colors.Green);
+
+        AddChild(sphere);
+
         AddChild(new MeshInstance3D
         {
-            Mesh = World3DUtils.GenerateMesh(icosahedron.Vertices, icosahedron.Triangles),
-            MaterialOverride = GD.Load<Material>("res://Scripts/3D FPS/material.tres")
+            Mesh = World3DUtils.CreateMesh(icosahedron.Vertices, icosahedron.Triangles),
+            MaterialOverride = new StandardMaterial3D
+            {
+                AlbedoColor = Colors.White,
+                MetallicSpecular = 1.0f
+            }
         });
     }
 }
 
 public static class World3DUtils
 {
-    public static Mesh GenerateMesh(Vector3[] vertices, int[] indices)
+    public static MeshInstance3D CreateSphere(Vector3 pos, float radius = 1, Color? color = null, int rings = 32)
+    {
+        return new MeshInstance3D
+        {
+            Mesh = new SphereMesh
+            {
+                Radius = radius,
+                Height = radius * 2,
+                Rings = rings,
+                Material = new StandardMaterial3D
+                {
+                    AlbedoColor = color ?? Colors.White
+                }
+            },
+            Position = pos
+        };
+    }
+
+    public static Mesh CreateMesh(Vector3[] vertices, int[] indices)
     {
         var arrays = new Godot.Collections.Array();
         arrays.Resize((int)Mesh.ArrayType.Max);
         arrays[(int)Mesh.ArrayType.Vertex] = vertices;
-        //arrays[(int)Mesh.ArrayType.Normal] = normals;
+
+        var normals = new Vector3[vertices.Length];
+
+        for (int i = 0; i < normals.Length; i++)
+            normals[i] = vertices[i].Normalized();
+
+        arrays[(int)Mesh.ArrayType.Normal] = normals;
         //arrays[(int)Mesh.ArrayType.TexUv] = uvs;
         //arrays[(int)Mesh.ArrayType.Color] = colors;
         arrays[(int)Mesh.ArrayType.Index] = indices;
@@ -61,26 +95,26 @@ public class Icosahedron
         };
 
         Triangles = new int[] {
-            0, 11, 5,
-            0, 5, 1,
-            0, 1, 7,
-            0, 7, 10,
-            0, 10, 11,
-            1, 5, 9,
-            5, 11, 4,
-            11, 10, 2,
-            10, 7, 6,
-            7, 1, 8,
-            3, 9, 4,
-            3, 4, 2,
-            3, 2, 6,
-            3, 6, 8,
-            3, 8, 9,
-            4, 9, 5,
-            2, 4, 11,
-            6, 2, 10,
-            8, 6, 7,
-            9, 8, 1
+            0, 5, 11,
+            0, 1, 5,
+            0, 7, 1,
+            0, 10, 7,
+            0, 11, 10,
+            1, 9, 5,
+            5, 4, 11,
+            11, 2, 10,
+            10, 6, 7,
+            7, 8, 1,
+            3, 4, 9,
+            3, 2, 4,
+            3, 6, 2,
+            3, 8, 6,
+            3, 9, 8,
+            4, 5, 9,
+            2, 11, 4,
+            6, 10, 2,
+            8, 7, 6,
+            9, 1, 8
         };
     }
 }
