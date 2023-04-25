@@ -38,6 +38,8 @@ public partial class Planet : Node3D
         var pos3 = icosahedron.Vertices[icosahedron.Triangles[2]];
 
         GenerateEdgePoints(pos1, pos2, 3);
+        GenerateEdgePoints(pos1, pos3, 3);
+        GenerateEdgePoints(pos2, pos3, 3);
 
         AddChild(new MeshInstance3D
         {
