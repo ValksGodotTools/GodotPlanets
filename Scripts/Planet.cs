@@ -4,20 +4,14 @@ public partial class Planet : Node3D
 {
     private void GenerateEdgePoints(Vector3 posA, Vector3 posB, int subdivisions)
     {
-        World3DUtils.CreateSphere(this, posA, Colors.Orange);
-        //World3DUtils.CreateSphere(this, posB, Colors.Orange);
+        // Generate first point
+        new DebugSphere(this, posA);
 
-        new Sphere(this, posB)
-        {
-            Color = Colors.Purple,
-            Radius = 0.5f
-        };
-
-        new Sphere(this, posB)
-            .SetColor(Colors.Purple)
-            .SetRadius(0.5f);
-
+        // Generate points between first and last
         GenerateEdgeMidPoints(posA, posB, subdivisions);
+
+        // Generate last point
+        new DebugSphere(this, posB);
     }
 
     private void GenerateEdgeMidPoints(Vector3 posA, Vector3 posB, int subdivisions)
@@ -29,7 +23,7 @@ public partial class Planet : Node3D
             var t = (float)(i) / (numPoints);
             var pos = posA.Lerp(posB, t);
 
-            World3DUtils.CreateSphere(this, pos, Colors.GreenYellow);
+            new DebugSphere(this, pos);
         }
     }
 
@@ -61,151 +55,8 @@ public class DebugSphere : Sphere
 {
     public DebugSphere(Node parent, Vector3 pos) : base(parent, pos)
     {
-        SetColor(Colors.Red);
         SetRadius(0.05f);
-    }
-}
-
-public class Sphere
-{
-    public float Radius
-    {
-        get => Mesh.Radius;
-        set => Mesh.Radius = value;
-    }
-
-    public Color Color
-    {
-        get
-        {
-            if (Mesh.Material == null)
-                return Colors.White;
-
-            return (Mesh.Material as StandardMaterial3D).AlbedoColor;
-        }
-        set
-        {
-            if (Mesh.Material == null)
-            {
-                Mesh.Material = new StandardMaterial3D
-                {
-                    AlbedoColor = value
-                };
-            }
-            else
-            {
-                (Mesh.Material as StandardMaterial3D).AlbedoColor = value;
-            }
-        }
-    }
-
-    private SphereMesh Mesh { get; }
-
-    public Sphere(Node parent, Vector3 pos)
-    {
-        Mesh = new();
-        parent.AddChild(new MeshInstance3D
-        {
-            Mesh = Mesh,
-            Position = pos
-        });
-    }
-
-    public Sphere SetColor(Color color) => this;
-    public Sphere SetRadius(float radius) => this;
-}
-
-public static class World3DUtils
-{
-    public static void CreateSphere(Node parent, Vector3 pos, Color? color = null, float radius = 0.05f, int rings = 32)
-    {
-        var meshInstance = new MeshInstance3D
-        {
-            Mesh = new SphereMesh
-            {
-                Radius = radius,
-                Height = radius * 2,
-                Rings = rings,
-                Material = new StandardMaterial3D
-                {
-                    AlbedoColor = color ?? Colors.White
-                }
-            },
-            Position = pos
-        };
-
-        parent.AddChild(meshInstance);
-    }
-
-    public static Mesh CreateMesh(Vector3[] vertices, int[] indices)
-    {
-        var arrays = new Godot.Collections.Array();
-        arrays.Resize((int)Mesh.ArrayType.Max);
-        arrays[(int)Mesh.ArrayType.Vertex] = vertices;
-
-        var normals = new Vector3[vertices.Length];
-
-        for (int i = 0; i < normals.Length; i++)
-            normals[i] = vertices[i].Normalized();
-
-        arrays[(int)Mesh.ArrayType.Normal] = normals;
-        //arrays[(int)Mesh.ArrayType.TexUv] = uvs;
-        //arrays[(int)Mesh.ArrayType.Color] = colors;
-        arrays[(int)Mesh.ArrayType.Index] = indices;
-
-        var mesh = new ArrayMesh();
-        mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
-
-        return mesh;
-    }
-}
-
-public class Icosahedron
-{
-    public Vector3[] Vertices  { get; }
-    public int[]     Triangles { get; }
-
-    public Icosahedron(float radius = 1)
-    {
-        var t = (1.0f + Mathf.Sqrt(5.0f)) / 2.0f;
-
-        Vertices = new Vector3[]
-        {
-            new Vector3(-1,  t,  0).Normalized() * radius,
-            new Vector3( 1,  t,  0).Normalized() * radius,
-            new Vector3(-1, -t,  0).Normalized() * radius,
-            new Vector3( 1, -t,  0).Normalized() * radius,
-            new Vector3( 0, -1,  t).Normalized() * radius,
-            new Vector3( 0,  1,  t).Normalized() * radius,
-            new Vector3( 0, -1, -t).Normalized() * radius,
-            new Vector3( 0,  1, -t).Normalized() * radius,
-            new Vector3( t,  0, -1).Normalized() * radius,
-            new Vector3( t,  0,  1).Normalized() * radius,
-            new Vector3(-t,  0, -1).Normalized() * radius,
-            new Vector3(-t,  0,  1).Normalized() * radius
-        };
-
-        Triangles = new int[] {
-            0, 5, 11,
-            0, 1, 5,
-            0, 7, 1,
-            0, 10, 7,
-            0, 11, 10,
-            1, 9, 5,
-            5, 4, 11,
-            11, 2, 10,
-            10, 6, 7,
-            7, 8, 1,
-            3, 4, 9,
-            3, 2, 4,
-            3, 6, 2,
-            3, 8, 6,
-            3, 9, 8,
-            4, 5, 9,
-            2, 11, 4,
-            6, 10, 2,
-            8, 7, 6,
-            9, 1, 8
-        };
+        SetColor(Colors.Green);
+        SetRings(16);
     }
 }

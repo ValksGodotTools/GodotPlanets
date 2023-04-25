@@ -4,6 +4,7 @@
     <LangVersion>11</LangVersion>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <DefineConstants>PLANETS</DefineConstants>
+	<RootNamespace>Planets</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="GodotUtils\Snippets\VS2022\ExportNodePath.snippet" />
