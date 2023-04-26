@@ -30,16 +30,21 @@ public class Chunk
         Edges[1] = GenerateEdgePoints(posA, posC, subdivisions);
         Edges[2] = GenerateEdgePoints(posB, posC, subdivisions);
 
+        GenerateCenterPoints();
+
         // Debug
         foreach (var edge in Edges)
             foreach (var point in edge.Value)
                 new DebugPoint(Parent, point);
 
-        GenerateCenterPoints();
+        foreach (var point in CenterPoints)
+            new DebugPoint(Parent, point).SetColor(Colors.Yellow);
     }
 
     private void GenerateCenterPoints()
     {
+        var index = 0;
+
         for (int i = 2; i < Edges[0].Length - 1; i++)
         {
             var centerPoints = i - 1;
@@ -52,8 +57,7 @@ public class Chunk
                 var t = (j + 1f) / (centerPoints + 1f);
                 var pos = leftEdgePoint.Lerp(rightEdgePoint, t);
 
-                new DebugPoint(Parent, pos)
-                    .SetColor(Colors.Yellow);
+                CenterPoints[index++] = pos;
             }
         }
     }
