@@ -63,20 +63,23 @@ public class Chunk
         var b = 3 + NumMidPoints * 2; // bottom edge index
         var c = 3 + NumMidPoints * 3; // center points index
 
-        new DebugPoint(Parent, Vertices[c])
+        new DebugPoint(Parent, Vertices[r + NumMidPoints - 1])
             .SetColor(Colors.Red)
             .SetRadius(0.04f);
 
-        new DebugPoint(Parent, Vertices[c + GUMath.SumNatrualNumbers(3) - 1])
+        new DebugPoint(Parent, Vertices[b])
             .SetColor(Colors.Green)
             .SetRadius(0.04f);
 
-        new DebugPoint(Parent, Vertices[l + 1])
+        new DebugPoint(Parent, Vertices[c + CenterPoints.Length - NumMidPoints + 1])
             .SetColor(Colors.Blue)
             .SetRadius(0.04f);
 
+        // Note that triangles are drawn counter clockwise to face
+        // the correct way
         var indices = new List<int>();
         indices.AddRange(BuildMainCornerIndices(l, r, b));
+        indices.AddRange(BuildSpecialCornerIndices(l, r, b, c));
         indices.AddRange(BuildLeftEdgeIndices(l, c));
         indices.AddRange(BuildRightEdgeIndices(r, c));
         indices.AddRange(BuildBottomEdgeIndices(b, c));
@@ -188,7 +191,18 @@ public class Chunk
             // The main 3 corners
             top        , r                   , l                   ,
             bottomLeft , l + NumMidPoints - 1, b + NumMidPoints - 1,
-            bottomRight, b                   , r + NumMidPoints - 1
+            bottomRight, b                   , r + NumMidPoints - 1,
+        };
+    }
+
+    private int[] BuildSpecialCornerIndices(int l, int r, int b, int c)
+    {
+        return new int[]
+        {
+            // There is a 'special' triangle next to each corner
+            r, c, l,
+            b, c + CenterPoints.Length - NumMidPoints + 1, r + NumMidPoints - 1,
+            l + NumMidPoints - 1, c + CenterPoints.Length - 1, b + NumMidPoints - 1
         };
     }
 
