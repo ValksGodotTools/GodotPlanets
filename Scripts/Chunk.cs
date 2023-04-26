@@ -83,6 +83,41 @@ public class Chunk
         indices.AddRange(BuildLeftEdgeIndices(l, c));
         indices.AddRange(BuildRightEdgeIndices(r, c));
         indices.AddRange(BuildBottomEdgeIndices(b, c));
+        indices.AddRange(BuildCenterIndices(c));
+
+        return indices.ToArray();
+    }
+
+    private int[] BuildCenterIndices(int c)
+    {
+        var indices = new List<int>();
+
+        GD.Print(GUMath.SumNatrualNumbers(3));
+
+        // end of row
+        var n = GUMath.SumNatrualNumbers(1 + 2);
+
+        /*for (int i = 0; i < 3; i++)
+        {
+            if (i == 0)
+            {
+                indices.AddRange(new int[] {
+                    c + i, c + i + 1, c + i + 2
+                });
+            }
+
+            
+
+            if (i >= 1)
+            {
+                indices.AddRange(new int[] {
+                    c + i + n, c + i + 1 + n, c + i + 2 - 1
+                });
+            }
+            
+
+            
+        }*/
 
         return indices.ToArray();
     }
