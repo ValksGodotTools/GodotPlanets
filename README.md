@@ -8,6 +8,9 @@ Making planets in Godot!
 git clone --recursive https://github.com/ValksGodotTools/Template
 ```
 
+## Reminders
+- Generalize camera orbit code so you never have to write it again
+
 ## Contributing
 Currently looking for programmers to peer review my code. I am struggling trying to figure out how to solve known issue (2).
 
