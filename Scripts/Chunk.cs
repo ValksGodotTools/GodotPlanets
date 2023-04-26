@@ -2,6 +2,8 @@
 
 public class Chunk
 {
+    public Vector3[] Vertices { get; private set; }
+
     private Dictionary<int, Vector3[]> Edges { get; } = new();
     private Vector3[] CenterPoints { get; }
 
@@ -29,16 +31,91 @@ public class Chunk
 
         GenerateMesh();
 
-        // Debug
+        // Generate Debug Green Edge Points
         foreach (var edge in Edges)
             foreach (var point in edge.Value)
                 new DebugPoint(Parent, point);
 
+        // Genereate Debug Yellow Center Points
         foreach (var point in CenterPoints)
             new DebugPoint(Parent, point).SetColor(Colors.Yellow);
     }
 
     private void GenerateMesh()
+    {
+        var rightEdgeIndices = new List<int>();
+
+        Vertices = BuildVertices();
+        var indices = BuildIndices();
+
+        var mesh = World3DUtils.CreateMesh(Vertices, indices);
+
+        Parent.AddChild(new MeshInstance3D
+        {
+            Mesh = mesh
+        });
+    }
+
+    private int[] BuildIndices()
+    {
+        var r = 3; // right edge index
+        var l = 3 + NumMidPoints; // left edge index
+        var b = 3 + NumMidPoints * 2; // bottom edge index
+        var c = 3 + NumMidPoints * 3; // center points index
+
+        new DebugPoint(Parent, Vertices[l + 0])
+            .SetColor(Colors.Red)
+            .SetRadius(0.04f);
+
+        new DebugPoint(Parent, Vertices[c])
+            .SetColor(Colors.Green)
+            .SetRadius(0.04f);
+
+        new DebugPoint(Parent, Vertices[l + 1])
+            .SetColor(Colors.Blue)
+            .SetRadius(0.04f);
+
+        var indices = new List<int>();
+        indices.AddRange(BuildMainCornerIndices(l, r, b));
+        indices.AddRange(BuildLeftEdgeIndices(l, c));
+
+        return indices.ToArray();
+    }
+
+    private int[] BuildLeftEdgeIndices(int l, int c)
+    {
+        var leftEdgeIndices = new List<int>();
+
+        var cIndex = 0;
+
+        for (int i = 0; i < NumMidPoints - 1; i++)
+        {
+            cIndex = i == 0 ? c : c + i + GUMath.SumNatrualNumbers(i + 1);
+
+            leftEdgeIndices.AddRange(new int[] {
+                l + i, cIndex, l + i + 1
+            });
+        }
+
+        return leftEdgeIndices.ToArray();
+    }
+
+    private int[] BuildMainCornerIndices(int l, int r, int b)
+    {
+        var top = 0;
+        var bottomLeft = 1;
+        var bottomRight = 2;
+
+        return new int[]
+        {
+            // The main 3 corners
+            top        , r                   , l                   ,
+            bottomLeft , l + NumMidPoints - 1, b + NumMidPoints - 1,
+            bottomRight, b                   , r + NumMidPoints - 1
+        };
+    }
+
+    private Vector3[] BuildVertices()
     {
         var vertices = new List<Vector3>();
 
@@ -59,61 +136,11 @@ public class Chunk
 
             vertices.AddRange(midpoints);
         }
-        
+
         // Add the center points
         vertices.AddRange(CenterPoints);
 
-        var top = 0;
-        var bottomLeft = 1;
-        var bottomRight = 2;
-        var r = 3; // right edge index
-        var l = 3 + NumMidPoints; // left edge index
-        var b = 3 + NumMidPoints * 2; // bottom edge index
-        var c = 3 + NumMidPoints * 3; // center points index
-
-        var mainCornerIndices = new int[]
-        {
-            // The main 3 corners
-            top        , r                   , l                   ,
-            bottomLeft , l + NumMidPoints - 1, b + NumMidPoints - 1,
-            bottomRight, b                   , r + NumMidPoints - 1
-        };
-
-        var leftEdgeIndices = new List<int>();
-
-        var cIndex = 0;
-
-        for (int i = 0; i < NumMidPoints - 1; i++)
-        {
-            cIndex = i == 0 ? c : c + i + GUMath.SumNatrualNumbers(i + 1);
-
-            leftEdgeIndices.AddRange(new int[] {
-                l + i, cIndex, l + i + 1
-            });
-        }
-
-        new DebugPoint(Parent, vertices[l + 0])
-            .SetColor(Colors.Red)
-            .SetRadius(0.04f);
-
-        new DebugPoint(Parent, vertices[c])
-            .SetColor(Colors.Green)
-            .SetRadius(0.04f);
-
-        new DebugPoint(Parent, vertices[l + 1])
-            .SetColor(Colors.Blue)
-            .SetRadius(0.04f);
-
-        var indices = new List<int>();
-        indices.AddRange(mainCornerIndices);
-        indices.AddRange(leftEdgeIndices);
-
-        var mesh = World3DUtils.CreateMesh(vertices.ToArray(), indices.ToArray());
-
-        Parent.AddChild(new MeshInstance3D
-        {
-            Mesh = mesh
-        });
+        return vertices.ToArray();
     }
 
     private Vector3[] GenerateCenterPoints()
