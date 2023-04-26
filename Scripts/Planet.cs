@@ -33,9 +33,9 @@ public partial class Planet : Node3D
     }
 }
 
-public class DebugSphere : Sphere
+public class DebugPoint : Sphere
 {
-    public DebugSphere(Node parent, Vector3 pos) : base(parent, pos)
+    public DebugPoint(Node parent, Vector3 pos) : base(parent, pos)
     {
         SetRadius(0.05f);
         SetColor(Colors.Green);
