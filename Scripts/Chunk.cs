@@ -63,15 +63,15 @@ public class Chunk
         var b = 3 + NumMidPoints * 2; // bottom edge index
         var c = 3 + NumMidPoints * 3; // center points index
 
-        new DebugPoint(Parent, Vertices[r + NumMidPoints - 1])
+        new DebugPoint(Parent, Vertices[c + 1])
             .SetColor(Colors.Red)
             .SetRadius(0.04f);
 
-        new DebugPoint(Parent, Vertices[b])
+        new DebugPoint(Parent, Vertices[c + 3])
             .SetColor(Colors.Green)
             .SetRadius(0.04f);
 
-        new DebugPoint(Parent, Vertices[c + CenterPoints.Length - NumMidPoints + 1])
+        new DebugPoint(Parent, Vertices[c + 4])
             .SetColor(Colors.Blue)
             .SetRadius(0.04f);
 
@@ -92,32 +92,12 @@ public class Chunk
     {
         var indices = new List<int>();
 
-        GD.Print(GUMath.SumNatrualNumbers(3));
+        indices.AddRange(new int[] {
+            c + 1, c + 2, c + 0,
 
-        // end of row
-        var n = GUMath.SumNatrualNumbers(1 + 2);
-
-        /*for (int i = 0; i < 3; i++)
-        {
-            if (i == 0)
-            {
-                indices.AddRange(new int[] {
-                    c + i, c + i + 1, c + i + 2
-                });
-            }
-
-            
-
-            if (i >= 1)
-            {
-                indices.AddRange(new int[] {
-                    c + i + n, c + i + 1 + n, c + i + 2 - 1
-                });
-            }
-            
-
-            
-        }*/
+            c + 3, c + 4, c + 1,
+            c + 4, c + 5, c + 2
+        });
 
         return indices.ToArray();
     }
