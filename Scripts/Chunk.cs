@@ -42,42 +42,52 @@ public class Chunk
     {
         var vertices = new List<Vector3>();
 
-        vertices.AddRange(Edges[0]);
-        vertices.AddRange(Edges[1]);
-        vertices.AddRange(Edges[2]);
+        // Add the 3 corners
+        for (int i = 0; i < 3; i++)
+            vertices.Add(Edges[i][0]);
+
+        // Add midpoints from each edge
+        for (int i = 0; i < 3; i++)
+        {
+            // RemoveAt() is slow so that's why we use LinkedList instead of List
+            var midpoints = new LinkedList<Vector3>(Edges[i]);
+
+            // Remove the duplicate corner vertices
+            midpoints.RemoveFirst();
+            midpoints.RemoveLast();
+
+            vertices.AddRange(midpoints);
+        }
+        
+        // Add the center points
         vertices.AddRange(CenterPoints);
 
-        new DebugPoint(Parent, Edges[0][0])
+        var a = 0; // 3 corners index
+        var r = 3; // right edge index
+        var l = 3 + NumMidPoints; // left edge index
+        var b = 3 + NumMidPoints * 2; // bottom edge index
+        var c = 3 + NumMidPoints * 3; // center points index
+
+        new DebugPoint(Parent, vertices[c])
             .SetColor(Colors.Purple)
             .SetRadius(0.1f);
 
-        new DebugPoint(Parent, Edges[0][1])
-            .SetColor(Colors.Purple)
+        new DebugPoint(Parent, vertices[c + 1])
+            .SetColor(Colors.Blue)
             .SetRadius(0.1f);
 
-        new DebugPoint(Parent, Edges[1][1])
-            .SetColor(Colors.Purple)
+        new DebugPoint(Parent, vertices[c + 2])
+            .SetColor(Colors.Green)
             .SetRadius(0.1f);
 
-        var r = 0; // Right Edge
-        var l = NumEdgePoints; // Left Edge
-        var b = NumEdgePoints * 2; // Bottom Edge
-        var c = NumEdgePoints * 3; // Center Points
+        
 
-        var indices = new int[]
-        {
-            r    , r + 1, l + 1,
-            r + 2, c    , r + 1,
-            c    , l + 1, r + 1,
-            c    , l + 2, l + 1,
-        };
-
-        var mesh = World3DUtils.CreateMesh(vertices.ToArray(), indices);
+        /*var mesh = World3DUtils.CreateMesh(vertices.ToArray(), indices);
 
         Parent.AddChild(new MeshInstance3D
         {
             Mesh = mesh
-        });
+        });*/
     }
 
     private Vector3[] GenerateCenterPoints()
