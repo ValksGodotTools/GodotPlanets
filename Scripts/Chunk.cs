@@ -26,7 +26,29 @@ public class Chunk
         // Debug
         foreach (var edge in Edges)
             foreach (var point in edge.Value)
-                new DebugSphere(Parent, point);
+                new DebugPoint(Parent, point);
+
+        GenerateCenterPoints();
+    }
+
+    private void GenerateCenterPoints()
+    {
+        for (int i = 2; i < Edges[0].Length - 1; i++)
+        {
+            var centerPoints = i - 1;
+
+            var leftEdgePoint = Edges[0][i];
+            var rightEdgePoint = Edges[1][i];
+
+            for (int j = 0; j < centerPoints; j++)
+            {
+                var t = (j + 1f) / (centerPoints + 1f);
+                var pos = leftEdgePoint.Lerp(rightEdgePoint, t);
+
+                new DebugPoint(Parent, pos)
+                    .SetColor(Colors.Yellow);
+            }
+        }
     }
 
     private Vector3[] GenerateEdgePoints(Vector3 posA, Vector3 posB, int subdivisions)
@@ -53,7 +75,7 @@ public class Chunk
         for (int i = 0; i < NumMidPoints; i++)
         {
             // Calculate mid points
-            var t = (float)(i + 1) / (NumMidPoints + 1);
+            var t = (i + 1f) / (NumMidPoints + 1f);
             var pos = posA.Lerp(posB, t);
 
             points[i + 1] = pos;
