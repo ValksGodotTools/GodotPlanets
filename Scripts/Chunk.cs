@@ -14,23 +14,20 @@ public class Chunk
     {
         Parent = parent;
 
+        // The number of mid points is always 2^n, so 1, 2, 4, 8, 16...
         NumMidPoints = Mathf.Max(0, (int)Mathf.Pow(2, subdivisions) - 1);
         NumEdgePoints = NumMidPoints + 2;
 
         for (int i = 0; i < Edges.Count; i++)
             Edges[i] = new Vector3[NumEdgePoints];
 
-        // Take note of i such that i >= 2 and i <= n - 1, there will always
-        // be i - 1 center points for each row
-        var numCenterPoints = GUMath.SumNatrualNumbers(NumMidPoints);
-
-        CenterPoints = new Vector3[numCenterPoints];
-
         Edges[0] = GenerateEdgePoints(posA, posB, subdivisions);
         Edges[1] = GenerateEdgePoints(posA, posC, subdivisions);
         Edges[2] = GenerateEdgePoints(posB, posC, subdivisions);
 
-        GenerateCenterPoints();
+        CenterPoints = GenerateCenterPoints();
+
+        GenerateMesh();
 
         // Debug
         foreach (var edge in Edges)
@@ -41,25 +38,81 @@ public class Chunk
             new DebugPoint(Parent, point).SetColor(Colors.Yellow);
     }
 
-    private void GenerateCenterPoints()
+    private void GenerateMesh()
     {
+        var vertices = new List<Vector3>();
+
+        vertices.AddRange(Edges[0]);
+        vertices.AddRange(Edges[1]);
+        vertices.AddRange(Edges[2]);
+        vertices.AddRange(CenterPoints);
+
+        new DebugPoint(Parent, Edges[0][0])
+            .SetColor(Colors.Purple)
+            .SetRadius(0.1f);
+
+        new DebugPoint(Parent, Edges[0][1])
+            .SetColor(Colors.Purple)
+            .SetRadius(0.1f);
+
+        new DebugPoint(Parent, Edges[1][1])
+            .SetColor(Colors.Purple)
+            .SetRadius(0.1f);
+
+        var r = 0; // Right Edge
+        var l = NumEdgePoints; // Left Edge
+        var b = NumEdgePoints * 2; // Bottom Edge
+        var c = NumEdgePoints * 3; // Center Points
+
+        var indices = new int[]
+        {
+            r    , r + 1, l + 1,
+            r + 2, c    , r + 1,
+            c    , l + 1, r + 1,
+            c    , l + 2, l + 1,
+        };
+
+        var mesh = World3DUtils.CreateMesh(vertices.ToArray(), indices);
+
+        Parent.AddChild(new MeshInstance3D
+        {
+            Mesh = mesh
+        });
+    }
+
+    private Vector3[] GenerateCenterPoints()
+    {
+        // Take note of i such that i >= 2 and i <= n - 1, there will always
+        // be i - 1 center points for each row. All up all the rows to get the
+        // number of center points.
+        var numCenterPoints = GUMath.SumNatrualNumbers(NumMidPoints);
+
+        var centerPoints = new Vector3[numCenterPoints];
         var index = 0;
 
-        for (int i = 2; i < Edges[0].Length - 1; i++)
+        // There will never be any center points when i = 0 or i = 1
+        // The center edge points at i = n do not count as 'center points'
+        // because they are touching the outer edge
+        for (int i = 2; i < NumEdgePoints - 1; i++)
         {
-            var centerPoints = i - 1;
+            // There will always be i - 1 center points for each row
+            var centerPointsCount = i - 1;
 
+            // Get the left and right edge points
             var leftEdgePoint = Edges[0][i];
             var rightEdgePoint = Edges[1][i];
 
-            for (int j = 0; j < centerPoints; j++)
+            for (int j = 0; j < centerPointsCount; j++)
             {
-                var t = (j + 1f) / (centerPoints + 1f);
+                // Calculate the points in between the left and right edge points
+                var t = (j + 1f) / (centerPointsCount + 1f);
                 var pos = leftEdgePoint.Lerp(rightEdgePoint, t);
 
-                CenterPoints[index++] = pos;
+                centerPoints[index++] = pos;
             }
         }
+
+        return centerPoints;
     }
 
     private Vector3[] GenerateEdgePoints(Vector3 posA, Vector3 posB, int subdivisions)
