@@ -10,7 +10,7 @@ public partial class Planet : Node3D
         var vertices = icosahedron.Vertices;
         var indices = icosahedron.Triangles;
 
-        var subdivisions = 2;
+        var subdivisions = 3;
 
         for (int i = 0; i < 3; i += 3)
         {
@@ -37,7 +37,7 @@ public class DebugPoint : Sphere
 {
     public DebugPoint(Node parent, Vector3 pos) : base(parent, pos)
     {
-        SetRadius(0.05f);
+        SetRadius(0.03f);
         SetColor(Colors.Green);
         SetRings(8);
         SetRadialSegments(16);
