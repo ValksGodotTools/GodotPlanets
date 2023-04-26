@@ -88,10 +88,19 @@ public class Chunk
     {
         var indices = new List<int>();
 
+        // Add right side triangles
         for (int i = 0; i < NumMidPoints - 1; i++)
             indices.AddRange(new int[] {
                 b + i, 
                 b + i + 1, 
+                c + CenterPoints.Length - NumMidPoints + i + 1
+            });
+
+        // Add flip side triangles
+        for (int i = 0; i < NumMidPoints - 2; i++)
+            indices.AddRange(new int[] {
+                b + i + 1,
+                c + CenterPoints.Length - NumMidPoints + i + 2,
                 c + CenterPoints.Length - NumMidPoints + i + 1
             });
 
