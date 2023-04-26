@@ -4,7 +4,7 @@ public partial class Planet : Node3D
 {
     public override void _Ready()
     {
-        GetViewport().DebugDraw = Viewport.DebugDrawEnum.Wireframe;
+        //GetViewport().DebugDraw = Viewport.DebugDrawEnum.Wireframe;
 
         var icosahedron = new Icosahedron();
         var vertices = icosahedron.Vertices;
@@ -21,7 +21,7 @@ public partial class Planet : Node3D
             new Chunk(this, posA, posB, posC, subdivisions);
         }
 
-        AddChild(new MeshInstance3D
+        /*AddChild(new MeshInstance3D
         {
             Mesh = World3DUtils.CreateMesh(icosahedron.Vertices, icosahedron.Triangles),
             MaterialOverride = new StandardMaterial3D
@@ -29,7 +29,7 @@ public partial class Planet : Node3D
                 AlbedoColor = Colors.White,
                 MetallicSpecular = 1.0f
             }
-        });
+        });*/
     }
 }
 
