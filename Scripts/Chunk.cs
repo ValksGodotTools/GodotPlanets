@@ -63,28 +63,58 @@ public class Chunk
         var b = 3 + NumMidPoints * 2; // bottom edge index
         var c = 3 + NumMidPoints * 3; // center points index
 
-        new DebugPoint(Parent, Vertices[l + 0])
+        new DebugPoint(Parent, Vertices[b + 1])
             .SetColor(Colors.Red)
             .SetRadius(0.04f);
 
-        new DebugPoint(Parent, Vertices[c])
+        new DebugPoint(Parent, Vertices[c + CenterPoints.Length - NumMidPoints + 1])
             .SetColor(Colors.Green)
             .SetRadius(0.04f);
 
-        new DebugPoint(Parent, Vertices[l + 1])
+        new DebugPoint(Parent, Vertices[b + 2])
             .SetColor(Colors.Blue)
             .SetRadius(0.04f);
 
         var indices = new List<int>();
         indices.AddRange(BuildMainCornerIndices(l, r, b));
         indices.AddRange(BuildLeftEdgeIndices(l, c));
+        indices.AddRange(BuildRightEdgeIndices(r, c));
+        indices.AddRange(BuildBottomEdgeIndices(b, c));
+
+        return indices.ToArray();
+    }
+
+    private int[] BuildBottomEdgeIndices(int b, int c)
+    {
+        var indices = new List<int>();
+
+        for (int i = 0; i < NumMidPoints - 1; i++)
+            indices.AddRange(new int[] {
+                b + i, 
+                b + i + 1, 
+                c + CenterPoints.Length - NumMidPoints + i + 1
+            });
+
+        return indices.ToArray();
+    }
+
+    private int[] BuildRightEdgeIndices(int r, int c)
+    {
+        var indices = new List<int>();
+
+        for (int i = 0; i < NumMidPoints - 1; i++)
+            indices.AddRange(new int[] {
+                r + i, 
+                r + i + 1, 
+                c + GUMath.SumNatrualNumbers(i + 1)
+            }); 
 
         return indices.ToArray();
     }
 
     private int[] BuildLeftEdgeIndices(int l, int c)
     {
-        var leftEdgeIndices = new List<int>();
+        var indices = new List<int>();
 
         var cIndex = 0;
 
@@ -92,12 +122,14 @@ public class Chunk
         {
             cIndex = i == 0 ? c : c + i + GUMath.SumNatrualNumbers(i + 1);
 
-            leftEdgeIndices.AddRange(new int[] {
-                l + i, cIndex, l + i + 1
+            indices.AddRange(new int[] {
+                l + i, 
+                cIndex, 
+                l + i + 1
             });
         }
 
-        return leftEdgeIndices.ToArray();
+        return indices.ToArray();
     }
 
     private int[] BuildMainCornerIndices(int l, int r, int b)
