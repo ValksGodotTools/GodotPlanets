@@ -63,15 +63,15 @@ public class Chunk
         var b = 3 + NumMidPoints * 2; // bottom edge index
         var c = 3 + NumMidPoints * 3; // center points index
 
-        new DebugPoint(Parent, Vertices[c + GUMath.SumNatrualNumbers(1 + 1)])
+        new DebugPoint(Parent, Vertices[c])
             .SetColor(Colors.Red)
             .SetRadius(0.04f);
 
-        new DebugPoint(Parent, Vertices[c + GUMath.SumNatrualNumbers(2 + 1)])
+        new DebugPoint(Parent, Vertices[c + GUMath.SumNatrualNumbers(3) - 1])
             .SetColor(Colors.Green)
             .SetRadius(0.04f);
 
-        new DebugPoint(Parent, Vertices[r + 1 + 1])
+        new DebugPoint(Parent, Vertices[l + 1])
             .SetColor(Colors.Blue)
             .SetRadius(0.04f);
 
@@ -141,6 +141,7 @@ public class Chunk
 
         var cIndex = 0;
 
+        // Add right side triangles
         for (int i = 0; i < NumMidPoints - 1; i++)
         {
             cIndex = i == 0 ? c : c + i + GUMath.SumNatrualNumbers(i + 1);
@@ -150,6 +151,27 @@ public class Chunk
                 cIndex, 
                 l + i + 1
             });
+        }
+
+        // Add flip side triangles
+        for (int i = 0; i < NumMidPoints - 2; i++)
+        {
+            if (i == 0)
+            {
+                indices.AddRange(new int[] {
+                    c,
+                    c + GUMath.SumNatrualNumbers(i + 3) - 1,
+                    l + i + 1
+                });
+            }
+            else
+            {
+                indices.AddRange(new int[] {
+                    c + GUMath.SumNatrualNumbers(i + 2) - 1,
+                    c + GUMath.SumNatrualNumbers(i + 3) - 1,
+                    l + i + 1
+                });
+            }
         }
 
         return indices.ToArray();
