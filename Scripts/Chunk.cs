@@ -43,8 +43,9 @@ public class Chunk
         var vertices = new List<Vector3>();
 
         // Add the 3 corners
-        for (int i = 0; i < 3; i++)
-            vertices.Add(Edges[i][0]);
+        vertices.Add(Edges[0][0]);
+        vertices.Add(Edges[1][NumEdgePoints - 1]);
+        vertices.Add(Edges[2][0]);
 
         // Add midpoints from each edge
         for (int i = 0; i < 3; i++)
@@ -62,32 +63,57 @@ public class Chunk
         // Add the center points
         vertices.AddRange(CenterPoints);
 
-        var a = 0; // 3 corners index
+        var top = 0;
+        var bottomLeft = 1;
+        var bottomRight = 2;
         var r = 3; // right edge index
         var l = 3 + NumMidPoints; // left edge index
         var b = 3 + NumMidPoints * 2; // bottom edge index
         var c = 3 + NumMidPoints * 3; // center points index
 
+        var mainCornerIndices = new int[]
+        {
+            // The main 3 corners
+            top        , r                   , l                   ,
+            bottomLeft , l + NumMidPoints - 1, b + NumMidPoints - 1,
+            bottomRight, b                   , r + NumMidPoints - 1
+        };
+
+        var leftEdgeIndices = new List<int>();
+
+        var cIndex = 0;
+
+        for (int i = 0; i < NumMidPoints - 1; i++)
+        {
+            cIndex = i == 0 ? c : c + i + GUMath.SumNatrualNumbers(i + 1);
+
+            leftEdgeIndices.AddRange(new int[] {
+                l + i, cIndex, l + i + 1
+            });
+        }
+
+        new DebugPoint(Parent, vertices[l + 0])
+            .SetColor(Colors.Red)
+            .SetRadius(0.04f);
+
         new DebugPoint(Parent, vertices[c])
-            .SetColor(Colors.Purple)
-            .SetRadius(0.1f);
-
-        new DebugPoint(Parent, vertices[c + 1])
-            .SetColor(Colors.Blue)
-            .SetRadius(0.1f);
-
-        new DebugPoint(Parent, vertices[c + 2])
             .SetColor(Colors.Green)
-            .SetRadius(0.1f);
+            .SetRadius(0.04f);
 
-        
+        new DebugPoint(Parent, vertices[l + 1])
+            .SetColor(Colors.Blue)
+            .SetRadius(0.04f);
 
-        /*var mesh = World3DUtils.CreateMesh(vertices.ToArray(), indices);
+        var indices = new List<int>();
+        indices.AddRange(mainCornerIndices);
+        indices.AddRange(leftEdgeIndices);
+
+        var mesh = World3DUtils.CreateMesh(vertices.ToArray(), indices.ToArray());
 
         Parent.AddChild(new MeshInstance3D
         {
             Mesh = mesh
-        });*/
+        });
     }
 
     private Vector3[] GenerateCenterPoints()
