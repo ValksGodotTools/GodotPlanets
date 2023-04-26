@@ -38,4 +38,11 @@ public class Sphere
 
         return this;
     }
+
+    public Sphere SetRadialSegments(int segments)
+    {
+        Mesh.RadialSegments = Mathf.Max(4, segments);
+
+        return this;
+    }
 }
