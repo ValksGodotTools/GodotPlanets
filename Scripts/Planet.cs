@@ -2,46 +2,23 @@ namespace Planets;
 
 public partial class Planet : Node3D
 {
-    private void GenerateEdgePoints(Vector3 posA, Vector3 posB, int subdivisions)
-    {
-        // Generate first point
-        new DebugSphere(this, posA);
-
-        // Generate points between first and last
-        GenerateEdgeMidPoints(posA, posB, subdivisions);
-
-        // Generate last point
-        new DebugSphere(this, posB);
-    }
-
-    private void GenerateEdgeMidPoints(Vector3 posA, Vector3 posB, int subdivisions)
-    {
-        var numPoints = Mathf.Max(0, (int)Mathf.Pow(2, subdivisions) - 1) + 1;
-
-        for (int i = 1; i < numPoints; i++)
-        {
-            var t = (float)(i) / (numPoints);
-            var pos = posA.Lerp(posB, t);
-
-            new DebugSphere(this, pos);
-        }
-    }
-
     public override void _Ready()
     {
         GetViewport().DebugDraw = Viewport.DebugDrawEnum.Wireframe;
 
         var icosahedron = new Icosahedron();
+        var vertices = icosahedron.Vertices;
+        var indices = icosahedron.Triangles;
 
-        for (int i = 0; i < icosahedron.Triangles.Length; i += 3)
+        var subdivisions = 1;
+
+        for (int i = 0; i < 3; i += 3)
         {
-            var pos1 = icosahedron.Vertices[icosahedron.Triangles[i]];
-            var pos2 = icosahedron.Vertices[icosahedron.Triangles[i + 1]];
-            var pos3 = icosahedron.Vertices[icosahedron.Triangles[i + 2]];
+            var posA = vertices[indices[i]];
+            var posB = vertices[indices[i + 1]];
+            var posC = vertices[indices[i + 2]];
 
-            GenerateEdgePoints(pos1, pos2, 3);
-            GenerateEdgePoints(pos1, pos3, 3);
-            GenerateEdgePoints(pos2, pos3, 3);
+            new Chunk(this, posA, posB, posC, subdivisions);
         }
 
         AddChild(new MeshInstance3D
@@ -62,6 +39,7 @@ public class DebugSphere : Sphere
     {
         SetRadius(0.05f);
         SetColor(Colors.Green);
-        SetRings(16);
+        SetRings(8);
+        SetRadialSegments(16);
     }
 }
