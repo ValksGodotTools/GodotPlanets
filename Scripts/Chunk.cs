@@ -2,7 +2,8 @@
 
 public class Chunk
 {
-    public Dictionary<int, Vector3[]> Edges { get; } = new();
+    private Dictionary<int, Vector3[]> Edges { get; } = new();
+    private Vector3[] CenterPoints { get; }
 
     private int NumMidPoints { get; }
     private int NumEdgePoints { get; }
@@ -18,6 +19,12 @@ public class Chunk
 
         for (int i = 0; i < Edges.Count; i++)
             Edges[i] = new Vector3[NumEdgePoints];
+
+        // Take note of i such that i >= 2 and i <= n - 1, there will always
+        // be i - 1 center points for each row
+        var numCenterPoints = GUMath.SumNatrualNumbers(NumMidPoints);
+
+        CenterPoints = new Vector3[numCenterPoints];
 
         Edges[0] = GenerateEdgePoints(posA, posB, subdivisions);
         Edges[1] = GenerateEdgePoints(posA, posC, subdivisions);
