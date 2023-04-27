@@ -78,17 +78,17 @@ public class Chunk
         // Note that triangles are drawn counter clockwise to face
         // the correct way
         var indices = new List<int>();
-        indices.AddRange(BuildMainCornerIndices(l, r, b));
-        indices.AddRange(BuildSpecialCornerIndices(l, r, b, c));
-        indices.AddRange(BuildLeftEdgeIndices(l, c));
-        indices.AddRange(BuildRightEdgeIndices(r, c));
-        indices.AddRange(BuildBottomEdgeIndices(b, c));
-        indices.AddRange(BuildCenterIndices(c));
+        indices.AddRange(BuildTrianglesMainCorners(l, r, b));
+        indices.AddRange(BuildTrianglesSpecial(l, r, b, c));
+        indices.AddRange(BuildTrianglesLeftEdge(l, c));
+        indices.AddRange(BuildTrianglesRightEdge(r, c));
+        indices.AddRange(BuildTrianglesBottomEdge(b, c));
+        indices.AddRange(BuildTrianglesCenter(c));
 
         return indices.ToArray();
     }
 
-    private int[] BuildCenterIndices(int c)
+    private int[] BuildTrianglesCenter(int c)
     {
         var indices = new List<int>();
 
@@ -130,7 +130,7 @@ public class Chunk
         return indices.ToArray();
     }
 
-    private int[] BuildBottomEdgeIndices(int b, int c)
+    private int[] BuildTrianglesBottomEdge(int b, int c)
     {
         var indices = new List<int>();
 
@@ -153,7 +153,7 @@ public class Chunk
         return indices.ToArray();
     }
 
-    private int[] BuildRightEdgeIndices(int r, int c)
+    private int[] BuildTrianglesRightEdge(int r, int c)
     {
         var indices = new List<int>();
 
@@ -181,7 +181,7 @@ public class Chunk
         return indices.ToArray();
     }
 
-    private int[] BuildLeftEdgeIndices(int l, int c)
+    private int[] BuildTrianglesLeftEdge(int l, int c)
     {
         var indices = new List<int>();
 
@@ -223,7 +223,7 @@ public class Chunk
         return indices.ToArray();
     }
 
-    private int[] BuildMainCornerIndices(int l, int r, int b)
+    private int[] BuildTrianglesMainCorners(int l, int r, int b)
     {
         var top = 0;
         var bottomLeft = 1;
@@ -238,7 +238,7 @@ public class Chunk
         };
     }
 
-    private int[] BuildSpecialCornerIndices(int l, int r, int b, int c)
+    private int[] BuildTrianglesSpecial(int l, int r, int b, int c)
     {
         return new int[]
         {
