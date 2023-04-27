@@ -93,11 +93,20 @@ public class Chunk
         var indices = new List<int>();
 
         indices.AddRange(new int[] {
-            c + 1, c + 2, c + 0,
-
-            c + 3, c + 4, c + 1,
-            c + 4, c + 5, c + 2
+            c + 1, c + 2, c + 0
         });
+
+        var r = 0;
+
+        for (int i = 1; i < CenterPoints.Length - 6; i++)
+        {
+            if (i >= GUMath.SumNaturalNumbers(3 + r))
+                r++;
+
+            indices.AddRange(new int[] {
+                c + r + i + 2, c + r + i + 3, c + i
+            });
+        }
 
         return indices.ToArray();
     }
@@ -135,7 +144,7 @@ public class Chunk
             indices.AddRange(new int[] {
                 r + i,
                 r + i + 1,
-                c + GUMath.SumNatrualNumbers(i + 1)
+                c + GUMath.SumNaturalNumbers(i + 1)
             });
         }
         
@@ -144,9 +153,9 @@ public class Chunk
         {
             indices.AddRange(new int[]
             {
-                c + GUMath.SumNatrualNumbers(i + 1),
+                c + GUMath.SumNaturalNumbers(i + 1),
                 r + i + 1,
-                c + GUMath.SumNatrualNumbers(i + 2)
+                c + GUMath.SumNaturalNumbers(i + 2)
             });
         }
 
@@ -162,7 +171,7 @@ public class Chunk
         // Add right side triangles
         for (int i = 0; i < NumMidPoints - 1; i++)
         {
-            cIndex = i == 0 ? c : c + i + GUMath.SumNatrualNumbers(i + 1);
+            cIndex = i == 0 ? c : c + i + GUMath.SumNaturalNumbers(i + 1);
 
             indices.AddRange(new int[] {
                 l + i, 
@@ -178,15 +187,15 @@ public class Chunk
             {
                 indices.AddRange(new int[] {
                     c,
-                    c + GUMath.SumNatrualNumbers(i + 3) - 1,
+                    c + GUMath.SumNaturalNumbers(i + 3) - 1,
                     l + i + 1
                 });
             }
             else
             {
                 indices.AddRange(new int[] {
-                    c + GUMath.SumNatrualNumbers(i + 2) - 1,
-                    c + GUMath.SumNatrualNumbers(i + 3) - 1,
+                    c + GUMath.SumNaturalNumbers(i + 2) - 1,
+                    c + GUMath.SumNaturalNumbers(i + 3) - 1,
                     l + i + 1
                 });
             }
@@ -254,7 +263,7 @@ public class Chunk
         // Take note of i such that i >= 2 and i <= n - 1, there will always
         // be i - 1 center points for each row. All up all the rows to get the
         // number of center points.
-        var numCenterPoints = GUMath.SumNatrualNumbers(NumMidPoints);
+        var numCenterPoints = GUMath.SumNaturalNumbers(NumMidPoints);
 
         var centerPoints = new Vector3[numCenterPoints];
         var index = 0;
