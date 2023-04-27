@@ -47,6 +47,34 @@ public class Chunk
         });
     }
 
+    private Vector3[] BuildVertices()
+    {
+        var vertices = new List<Vector3>();
+
+        // Add the 3 corners
+        vertices.Add(Edges[0][0]);
+        vertices.Add(Edges[1][NumEdgePoints - 1]);
+        vertices.Add(Edges[2][0]);
+
+        // Add midpoints from each edge
+        for (int i = 0; i < 3; i++)
+        {
+            // RemoveAt() is slow so that's why we use LinkedList instead of List
+            var midpoints = new LinkedList<Vector3>(Edges[i]);
+
+            // Remove the duplicate corner vertices
+            midpoints.RemoveFirst();
+            midpoints.RemoveLast();
+
+            vertices.AddRange(midpoints);
+        }
+
+        // Add the center points
+        vertices.AddRange(CenterPoints);
+
+        return vertices.ToArray();
+    }
+
     private int[] BuildIndices()
     {
         var r = 3; // right edge index
@@ -232,34 +260,6 @@ public class Chunk
             b, c + CenterPoints.Length - NumMidPoints + 1, r + NumMidPoints - 1,
             l + NumMidPoints - 1, c + CenterPoints.Length - 1, b + NumMidPoints - 1
         };
-    }
-
-    private Vector3[] BuildVertices()
-    {
-        var vertices = new List<Vector3>();
-
-        // Add the 3 corners
-        vertices.Add(Edges[0][0]);
-        vertices.Add(Edges[1][NumEdgePoints - 1]);
-        vertices.Add(Edges[2][0]);
-
-        // Add midpoints from each edge
-        for (int i = 0; i < 3; i++)
-        {
-            // RemoveAt() is slow so that's why we use LinkedList instead of List
-            var midpoints = new LinkedList<Vector3>(Edges[i]);
-
-            // Remove the duplicate corner vertices
-            midpoints.RemoveFirst();
-            midpoints.RemoveLast();
-
-            vertices.AddRange(midpoints);
-        }
-
-        // Add the center points
-        vertices.AddRange(CenterPoints);
-
-        return vertices.ToArray();
     }
 
     private Vector3[] GenerateCenterPoints()
