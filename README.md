@@ -24,7 +24,7 @@ git clone --recursive https://github.com/ValksGodotTools/Template
 - Generalize camera orbit code so you never have to write it again
 
 ## Contributing
-Currently looking for programmers to peer review my code. I am struggling trying to figure out how to solve known issue (2).
+Currently looking for programmers to peer review my code.
 
 [Projects Coding Style](https://github.com/Valks-Games/sankari/wiki/Code-Style)
 
