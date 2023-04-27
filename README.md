@@ -15,7 +15,7 @@ git clone --recursive https://github.com/ValksGodotTools/Template
 ```
 
 ## Roadmap
-- Look into properly calculating the normals instead of just doing `.Normalized()` to each vertex. Instead take the neighboring vertices into account when calculating the normal. But getting the neighboring vertices is going to be a pain on its own...
+- Look into properly calculating the normals instead of just doing `.Normalized()` to each vertex. Instead take the neighboring vertices into account when calculating the normal. But getting the neighboring vertices is going to be a pain on its own... Edit: Seems like SurfaceTool can do this for us, see https://docs.godotengine.org/en/stable/classes/class_surfacetool.html#class-surfacetool-method-generate-normals
 - Textures!
 - Water!
 - Trees!
