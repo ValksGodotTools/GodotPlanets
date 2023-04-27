@@ -10,21 +10,21 @@ public class Chunk
     private int NumMidPoints { get; }
     private int NumEdgePoints { get; }
 
-    private int Subdivisions { get; }
+    private int Resolution { get; }
     private int NumTriangles { get; }
 
     private Node Parent { get; }
 
-    public Chunk(Node parent, Vector3 posA, Vector3 posB, Vector3 posC, int subdivisions)
+    public Chunk(Node parent, Vector3 posA, Vector3 posB, Vector3 posC, int resolution)
     {
         Parent = parent;
 
         // 0 subdivisions is not supported because I'm bad at coding
-        Subdivisions = Mathf.Max(2, subdivisions + 1);
+        Resolution = Mathf.Max(2, resolution + 1);
 
-        NumTriangles = Subdivisions * Subdivisions;
+        NumTriangles = Resolution * Resolution;
 
-        NumEdgePoints = Subdivisions + 1;
+        NumEdgePoints = Resolution + 1;
         NumMidPoints = NumEdgePoints - 2;
 
         for (int i = 0; i < Edges.Count; i++)
@@ -114,7 +114,7 @@ public class Chunk
 
         var indices = new List<int>();
 
-        if (Subdivisions == 0)
+        if (Resolution == 0)
         {
             indices.AddRange(new int[] { 0, 2, 1 });
         }
@@ -136,7 +136,7 @@ public class Chunk
 
             indices.AddRange(centerUpside);
 
-            if (Subdivisions > 4)
+            if (Resolution > 4)
                 indices.AddRange(centerFlipside);
         }
 
@@ -153,8 +153,7 @@ public class Chunk
         });
 
         var r = 0;
-
-        var numCenterUpsideTriangles = (Subdivisions - 3) * (Subdivisions - 3);
+        var numCenterUpsideTriangles = (Resolution - 3) * (Resolution - 3) - GUMath.SumNaturalNumbers(Resolution - 3);
 
         for (int i = 1; i < numCenterUpsideTriangles; i++)
         {
@@ -179,7 +178,7 @@ public class Chunk
             c + 4, c + 2, c + 1
         });
 
-        var numCenterFlipsideTriangles = (Subdivisions - 4) * (Subdivisions - 4) - GUMath.SumNaturalNumbers(Subdivisions - 4);
+        var numCenterFlipsideTriangles = (Resolution - 4) * (Resolution - 4) - GUMath.SumNaturalNumbers(Resolution - 4);
         var x = 0;
 
         for (int i = 1; i < numCenterFlipsideTriangles; i++)
@@ -305,7 +304,7 @@ public class Chunk
 
     private int[] BuildTrianglesSpecial(int l, int r, int b, int c)
     {
-        if (Subdivisions <= 2)
+        if (Resolution <= 2)
         {
             return new int[]
             {
