@@ -30,15 +30,6 @@ public class Chunk
         CenterPoints = GenerateCenterPoints();
 
         GenerateMesh();
-
-        // Generate Debug Green Edge Points
-        foreach (var edge in Edges)
-            foreach (var point in edge.Value)
-                new DebugPoint(Parent, point);
-
-        // Genereate Debug Yellow Center Points
-        foreach (var point in CenterPoints)
-            new DebugPoint(Parent, point).SetColor(Colors.Yellow);
     }
 
     private void GenerateMesh()
@@ -62,18 +53,6 @@ public class Chunk
         var l = 3 + NumMidPoints; // left edge index
         var b = 3 + NumMidPoints * 2; // bottom edge index
         var c = 3 + NumMidPoints * 3; // center points index
-
-        new DebugPoint(Parent, Vertices[c + 1])
-            .SetColor(Colors.Red)
-            .SetRadius(0.04f);
-
-        new DebugPoint(Parent, Vertices[c + 3])
-            .SetColor(Colors.Green)
-            .SetRadius(0.04f);
-
-        new DebugPoint(Parent, Vertices[c + 4])
-            .SetColor(Colors.Blue)
-            .SetRadius(0.04f);
 
         var indices = new List<int>();
         indices.AddRange(BuildTrianglesMainCorners(l, r, b));

@@ -12,7 +12,7 @@ public partial class Planet : Node3D
 
         var subdivisions = 3;
 
-        for (int i = 0; i < 3; i += 3)
+        for (int i = 0; i < indices.Length; i += 3)
         {
             var posA = vertices[indices[i]];
             var posB = vertices[indices[i + 1]];
@@ -20,16 +20,6 @@ public partial class Planet : Node3D
 
             new Chunk(this, posA, posB, posC, subdivisions);
         }
-
-        /*AddChild(new MeshInstance3D
-        {
-            Mesh = World3DUtils.CreateMesh(icosahedron.Vertices, icosahedron.Triangles),
-            MaterialOverride = new StandardMaterial3D
-            {
-                AlbedoColor = Colors.White,
-                MetallicSpecular = 1.0f
-            }
-        });*/
     }
 }
 
