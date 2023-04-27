@@ -92,6 +92,7 @@ public class Chunk
     {
         var indices = new List<int>();
 
+        // Up-side Triangles
         indices.AddRange(new int[] {
             c + 1, c + 2, c + 0
         });
@@ -105,6 +106,24 @@ public class Chunk
 
             indices.AddRange(new int[] {
                 c + r + i + 2, c + r + i + 3, c + i
+            });
+        }
+
+        // Flip-side Triangles
+        indices.AddRange(new int[]
+        {
+            c + 4, c + 2, c + 1
+        });
+
+        var x = 0;
+
+        for (int i = 1; i < CenterPoints.Length - 11; i++)
+        {
+            if (i >= GUMath.SumNaturalNumbers(3 + x))
+                x++;
+
+            indices.AddRange(new int[] {
+                c + i + 6 + (x * 2), c + i + 3 + x, c + i + 2 + x
             });
         }
 
