@@ -10,9 +10,9 @@ public partial class Planet : Node3D
         var vertices = icosahedron.Vertices;
         var indices = icosahedron.Triangles;
 
-        var subdivisions = 3;
+        var subdivisions = 20;
 
-        for (int i = 0; i < indices.Length; i += 3)
+        for (int i = 0; i < 3; i += 3)
         {
             var posA = vertices[indices[i]];
             var posB = vertices[indices[i + 1]];

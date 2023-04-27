@@ -10,26 +10,38 @@ public class Chunk
     private int NumMidPoints { get; }
     private int NumEdgePoints { get; }
 
+    private int Subdivisions { get; }
+    private int NumTriangles { get; }
+
     private Node Parent { get; }
 
     public Chunk(Node parent, Vector3 posA, Vector3 posB, Vector3 posC, int subdivisions)
     {
         Parent = parent;
 
-        // The number of mid points is always 2^n, so 1, 2, 4, 8, 16...
-        NumMidPoints = Mathf.Max(0, (int)Mathf.Pow(2, subdivisions) - 1);
-        NumEdgePoints = NumMidPoints + 2;
+        // 0 subdivisions is not supported because I'm bad at coding
+        Subdivisions = Mathf.Max(2, subdivisions + 1);
+
+        NumTriangles = Subdivisions * Subdivisions;
+
+        NumEdgePoints = Subdivisions + 1;
+        NumMidPoints = NumEdgePoints - 2;
 
         for (int i = 0; i < Edges.Count; i++)
             Edges[i] = new Vector3[NumEdgePoints];
 
-        Edges[0] = GenerateEdgePoints(posA, posB, subdivisions);
-        Edges[1] = GenerateEdgePoints(posA, posC, subdivisions);
-        Edges[2] = GenerateEdgePoints(posB, posC, subdivisions);
+        Edges[0] = GenerateEdgePoints(posA, posB);
+        Edges[1] = GenerateEdgePoints(posA, posC);
+        Edges[2] = GenerateEdgePoints(posB, posC);
 
         CenterPoints = GenerateCenterPoints();
 
         GenerateMesh();
+
+        foreach (var centerPoint in CenterPoints)
+            new DebugPoint(Parent, centerPoint)
+                .SetColor(Colors.Yellow)
+                .SetRadius(0.01f);
     }
 
     private void GenerateMesh()
@@ -45,6 +57,26 @@ public class Chunk
         {
             Mesh = mesh
         });
+    }
+
+    private List<Vector3> DeformVertices(List<Vector3> vertices)
+    {
+        var noise = new FastNoiseLite
+        {
+            Frequency = 0.005f
+        };
+
+        var noiseStrength = 50;
+        var planetRadius = 3;
+
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            var n = noise.GetNoise3Dv(vertices[i] * noiseStrength);
+
+            vertices[i] = vertices[i].Normalized() * (planetRadius + n);
+        }
+
+        return vertices;
     }
 
     private Vector3[] BuildVertices()
@@ -72,6 +104,9 @@ public class Chunk
         // Add the center points
         vertices.AddRange(CenterPoints);
 
+        // Deform the vertices
+        //vertices = DeformVertices(vertices);
+
         return vertices.ToArray();
     }
 
@@ -83,13 +118,32 @@ public class Chunk
         var c = 3 + NumMidPoints * 3; // center points index
 
         var indices = new List<int>();
-        indices.AddRange(BuildTrianglesMainCorners(l, r, b));
-        indices.AddRange(BuildTrianglesSpecial(l, r, b, c));
-        indices.AddRange(BuildTrianglesLeftEdge(l, c));
-        indices.AddRange(BuildTrianglesRightEdge(r, c));
-        indices.AddRange(BuildTrianglesBottomEdge(b, c));
-        indices.AddRange(BuildTrianglesCenterUpside(c));
-        indices.AddRange(BuildTrianglesCenterFlipside(c));
+
+        if (Subdivisions == 0)
+        {
+            indices.AddRange(new int[] { 0, 2, 1 });
+        }
+        else
+        {
+            var mainCorners = BuildTrianglesMainCorners(l, r, b);
+            var special = BuildTrianglesSpecial(l, r, b, c);
+            var leftEdge = BuildTrianglesLeftEdge(l, c);
+            var rightEdge = BuildTrianglesRightEdge(r, c);
+            var bottomEdge = BuildTrianglesBottomEdge(b, c);
+            var centerUpside = BuildTrianglesCenterUpside(c);
+            var centerFlipside = BuildTrianglesCenterFlipside(c);
+
+            indices.AddRange(mainCorners);
+            indices.AddRange(special);
+            indices.AddRange(leftEdge);
+            indices.AddRange(rightEdge);
+            indices.AddRange(bottomEdge);
+
+            indices.AddRange(centerUpside);
+
+            if (Subdivisions > 4)
+                indices.AddRange(centerFlipside);
+        }
 
         return indices.ToArray();
     }
@@ -105,7 +159,9 @@ public class Chunk
 
         var r = 0;
 
-        for (int i = 1; i < CenterPoints.Length - 6; i++)
+        var numCenterUpsideTriangles = (Subdivisions - 3) * (Subdivisions - 3);
+
+        for (int i = 1; i < numCenterUpsideTriangles; i++)
         {
             if (i >= GUMath.SumNaturalNumbers(3 + r))
                 r++;
@@ -128,9 +184,10 @@ public class Chunk
             c + 4, c + 2, c + 1
         });
 
+        var numCenterFlipsideTriangles = (Subdivisions - 4) * (Subdivisions - 4) - GUMath.SumNaturalNumbers(Subdivisions - 4);
         var x = 0;
 
-        for (int i = 1; i < CenterPoints.Length - 11; i++)
+        for (int i = 1; i < numCenterFlipsideTriangles; i++)
         {
             if (i >= GUMath.SumNaturalNumbers(3 + x))
                 x++;
@@ -253,13 +310,23 @@ public class Chunk
 
     private int[] BuildTrianglesSpecial(int l, int r, int b, int c)
     {
-        return new int[]
+        if (Subdivisions <= 2)
         {
-            // There is a 'special' triangle next to each corner
-            r, c, l,
-            b, c + CenterPoints.Length - NumMidPoints + 1, r + NumMidPoints - 1,
-            l + NumMidPoints - 1, c + CenterPoints.Length - 1, b + NumMidPoints - 1
-        };
+            return new int[]
+            {
+                r, b, l
+            };
+        }
+        else
+        {
+            return new int[]
+            {
+                // There is a 'special' triangle next to each corner
+                r, c, l,
+                b, c + CenterPoints.Length - NumMidPoints + 1, r + NumMidPoints - 1,
+                l + NumMidPoints - 1, c + CenterPoints.Length - 1, b + NumMidPoints - 1
+            };
+        }
     }
 
     private Vector3[] GenerateCenterPoints()
@@ -297,7 +364,7 @@ public class Chunk
         return centerPoints;
     }
 
-    private Vector3[] GenerateEdgePoints(Vector3 posA, Vector3 posB, int subdivisions)
+    private Vector3[] GenerateEdgePoints(Vector3 posA, Vector3 posB)
     {
         var points = new Vector3[NumEdgePoints];
 
@@ -308,12 +375,12 @@ public class Chunk
         points[NumEdgePoints - 1] = posB;
 
         // Generate points between first and last
-        GenerateEdgeMidPoints(points, subdivisions);
+        GenerateEdgeMidPoints(points);
 
         return points;
     }
 
-    private void GenerateEdgeMidPoints(Vector3[] points, int subdivisions)
+    private void GenerateEdgeMidPoints(Vector3[] points)
     {
         var posA = points[0];
         var posB = points[NumEdgePoints - 1];
