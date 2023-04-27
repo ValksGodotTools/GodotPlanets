@@ -12,6 +12,14 @@ Making planets in Godot!
 git clone --recursive https://github.com/ValksGodotTools/Template
 ```
 
+## Roadmap
+- Look into properly calculating the normals instead of just doing `.Normalized()` to each vertex. Instead take the neighboring vertices into account when calculating the normal. But getting the neighboring vertices is going to be a pain on its own...
+- Textures!
+- Water!
+- Trees!
+- Focal point of view shader!
+- Split the chunks into further chunks!
+
 ## Reminders
 - Generalize camera orbit code so you never have to write it again
 
