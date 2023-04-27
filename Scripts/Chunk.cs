@@ -75,20 +75,19 @@ public class Chunk
             .SetColor(Colors.Blue)
             .SetRadius(0.04f);
 
-        // Note that triangles are drawn counter clockwise to face
-        // the correct way
         var indices = new List<int>();
         indices.AddRange(BuildTrianglesMainCorners(l, r, b));
         indices.AddRange(BuildTrianglesSpecial(l, r, b, c));
         indices.AddRange(BuildTrianglesLeftEdge(l, c));
         indices.AddRange(BuildTrianglesRightEdge(r, c));
         indices.AddRange(BuildTrianglesBottomEdge(b, c));
-        indices.AddRange(BuildTrianglesCenter(c));
+        indices.AddRange(BuildTrianglesCenterUpside(c));
+        indices.AddRange(BuildTrianglesCenterFlipside(c));
 
         return indices.ToArray();
     }
 
-    private int[] BuildTrianglesCenter(int c)
+    private int[] BuildTrianglesCenterUpside(int c)
     {
         var indices = new List<int>();
 
@@ -108,6 +107,13 @@ public class Chunk
                 c + r + i + 2, c + r + i + 3, c + i
             });
         }
+
+        return indices.ToArray();
+    }
+
+    private int[] BuildTrianglesCenterFlipside(int c)
+    {
+        var indices = new List<int>();
 
         // Flip-side Triangles
         indices.AddRange(new int[]
