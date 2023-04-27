@@ -120,6 +120,8 @@ public class Chunk
         }
         else
         {
+            // Variables were created here for easy debugging (to see the lengths 
+            // of each index array)
             var mainCorners = BuildTrianglesMainCorners(l, r, b);
             var special = BuildTrianglesSpecial(l, r, b, c);
             var leftEdge = BuildTrianglesLeftEdge(l, c);
