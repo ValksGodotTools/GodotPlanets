@@ -37,11 +37,6 @@ public class Chunk
         CenterPoints = GenerateCenterPoints();
 
         GenerateMesh();
-
-        foreach (var centerPoint in CenterPoints)
-            new DebugPoint(Parent, centerPoint)
-                .SetColor(Colors.Yellow)
-                .SetRadius(0.01f);
     }
 
     private void GenerateMesh()
@@ -63,11 +58,11 @@ public class Chunk
     {
         var noise = new FastNoiseLite
         {
-            Frequency = 0.005f
+            Frequency = 0.003f
         };
 
-        var noiseStrength = 50;
-        var planetRadius = 3;
+        var noiseStrength = 1000;
+        var planetRadius = 12;
 
         for (int i = 0; i < vertices.Count; i++)
         {
@@ -105,7 +100,7 @@ public class Chunk
         vertices.AddRange(CenterPoints);
 
         // Deform the vertices
-        //vertices = DeformVertices(vertices);
+        vertices = DeformVertices(vertices);
 
         return vertices.ToArray();
     }
