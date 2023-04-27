@@ -62,7 +62,7 @@ public class Chunk
         };
 
         var noiseStrength = 1000;
-        var planetRadius = 12;
+        var planetRadius = 10;
 
         for (int i = 0; i < vertices.Count; i++)
         {
