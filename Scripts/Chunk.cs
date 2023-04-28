@@ -10,10 +10,10 @@ public class ChunkV2
     {
         Parent = parent;
         
-        Vertices = BuildVertices(posA, posB, posC, resolution);
+        var vertices = BuildVertices(posA, posB, posC, resolution);
         var indices = BuildIndices(resolution);
 
-        var mesh = World3DUtils.CreateMesh(Vertices, indices);
+        var mesh = World3DUtils.CreateMesh(vertices, indices);
 
         Parent.AddChild(new MeshInstance3D
         {
@@ -21,8 +21,35 @@ public class ChunkV2
         });
     }
 
-    private Vector3[] Vertices { get; set; }
-    private Color[] ColorArr { get; set; }
+    private Vector3[] BuildVertices(Vector3 posA, Vector3 posB, Vector3 posC, int res)
+    {
+        var vertices = new List<Vector3>();
+
+        // The 3 main corners
+        vertices.Add(posA);
+        vertices.Add(posB);
+        vertices.Add(posC);
+
+        // The edge midpoints
+        if (res >= 1)
+        {
+            var edgeMidpointsLeft = GenerateEdgeMidPoints(posA, posC, res);
+            var edgeMidpointsRight = GenerateEdgeMidPoints(posA, posB, res);
+
+            vertices.AddRange(edgeMidpointsLeft); // left
+            vertices.AddRange(edgeMidpointsRight); // right
+            vertices.AddRange(GenerateEdgeMidPoints(posB, posC, res)); // bottom
+
+            // The center points
+            if (res >= 2)
+                vertices.AddRange(GenerateCenterPoints(edgeMidpointsLeft, edgeMidpointsRight, res));
+        }
+
+        foreach (var vertex in vertices)
+            new DebugPoint(Parent, vertex, "");
+
+        return vertices.ToArray();
+    }
 
     private int[] BuildIndices(int res)
     {
@@ -227,28 +254,6 @@ public class ChunkV2
         }
 
         return indices;
-    }
-
-    private Vector3[] BuildVertices(Vector3 posA, Vector3 posB, Vector3 posC, int resolution)
-    {
-        var vertices = new List<Vector3>();
-
-        var edgeMidpointsLeft = GenerateEdgeMidPoints(posA, posC, resolution);
-        var edgeMidpointsRight = GenerateEdgeMidPoints(posA, posB, resolution);
-
-        vertices.Add(posA);
-        vertices.Add(posB);
-        vertices.Add(posC);
-        vertices.AddRange(edgeMidpointsLeft); // left
-        vertices.AddRange(edgeMidpointsRight); // right
-
-        if (resolution > 0)
-            vertices.AddRange(GenerateEdgeMidPoints(posB, posC, resolution)); // bottom
-
-        if (resolution > 1)
-            vertices.AddRange(GenerateCenterPoints(edgeMidpointsLeft, edgeMidpointsRight, resolution));
-
-        return vertices.ToArray();
     }
 
     private Vector3[] GenerateCenterPoints(Vector3[] edgeMidpointsLeft, Vector3[] edgeMidpointsRight, int resolution)

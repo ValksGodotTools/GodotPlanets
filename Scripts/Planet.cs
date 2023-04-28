@@ -10,7 +10,7 @@ public partial class Planet : Node3D
         var vertices = icosahedron.Vertices;
         var indices = icosahedron.Triangles;
 
-        var resolution = 3;
+        var resolution = 5;
 
         for (int i = 0; i < 3; i += 3)
         {
