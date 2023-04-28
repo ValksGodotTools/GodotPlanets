@@ -8,19 +8,16 @@ public class ChunkV2
 
     public ChunkV2(Node parent, Vector3 posA, Vector3 posB, Vector3 posC, int resolution)
     {
-        Logger.LogMs(() =>
+        Parent = parent;
+
+        var vertices = BuildVertices(posA, posB, posC, resolution);
+        var indices = BuildIndices(resolution);
+
+        var mesh = World3DUtils.CreateMesh(vertices, indices, false);
+
+        Parent.AddChild(new MeshInstance3D
         {
-            Parent = parent;
-
-            var vertices = BuildVertices(posA, posB, posC, resolution);
-            var indices = BuildIndices(resolution);
-
-            var mesh = World3DUtils.CreateMesh(vertices, indices);
-
-            Parent.AddChild(new MeshInstance3D
-            {
-                Mesh = mesh
-            });
+            Mesh = mesh
         });
     }
 
@@ -363,7 +360,7 @@ public class Chunk
         Vertices = BuildVertices();
         var indices = BuildIndices();
 
-        var mesh = World3DUtils.CreateMesh(Vertices, indices);
+        var mesh = World3DUtils.CreateMesh(Vertices, indices, true);
 
         Parent.AddChild(new MeshInstance3D
         {

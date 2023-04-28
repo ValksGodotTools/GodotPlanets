@@ -10,16 +10,19 @@ public partial class Planet : Node3D
         var vertices = icosahedron.Vertices;
         var indices = icosahedron.Triangles;
 
-        var resolution = 64;
+        var resolution = 256;
 
-        for (int i = 0; i < 3; i += 3)
+        Logger.LogMs(() =>
         {
-            var posA = vertices[indices[i]];
-            var posB = vertices[indices[i + 1]];
-            var posC = vertices[indices[i + 2]];
+            for (int i = 0; i < indices.Length; i += 3)
+            {
+                var posA = vertices[indices[i]];
+                var posB = vertices[indices[i + 1]];
+                var posC = vertices[indices[i + 2]];
 
-            new ChunkV2(this, posA, posB, posC, resolution);
-        }
+                new ChunkV2(this, posA, posB, posC, resolution);
+            }
+        });
     }
 }
 
