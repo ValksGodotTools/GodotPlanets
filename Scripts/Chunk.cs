@@ -8,16 +8,19 @@ public class ChunkV2
 
     public ChunkV2(Node parent, Vector3 posA, Vector3 posB, Vector3 posC, int resolution)
     {
-        Parent = parent;
-        
-        var vertices = BuildVertices(posA, posB, posC, resolution);
-        var indices = BuildIndices(resolution);
-
-        var mesh = World3DUtils.CreateMesh(vertices, indices);
-
-        Parent.AddChild(new MeshInstance3D
+        Logger.LogMs(() =>
         {
-            Mesh = mesh
+            Parent = parent;
+
+            var vertices = BuildVertices(posA, posB, posC, resolution);
+            var indices = BuildIndices(resolution);
+
+            var mesh = World3DUtils.CreateMesh(vertices, indices);
+
+            Parent.AddChild(new MeshInstance3D
+            {
+                Mesh = mesh
+            });
         });
     }
 
@@ -45,10 +48,29 @@ public class ChunkV2
                 vertices.AddRange(GenerateCenterPoints(edgeMidpointsLeft, edgeMidpointsRight, res));
         }
 
-        foreach (var vertex in vertices)
-            new DebugPoint(Parent, vertex, "");
+        vertices = DeformVertices(vertices);
 
         return vertices.ToArray();
+    }
+
+    private List<Vector3> DeformVertices(List<Vector3> vertices)
+    {
+        var noise = new FastNoiseLite
+        {
+            Frequency = 0.003f
+        };
+
+        var noiseStrength = 1000;
+        var planetRadius = 10;
+
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            var n = noise.GetNoise3Dv(vertices[i] * noiseStrength);
+
+            vertices[i] = vertices[i].Normalized() * (planetRadius + n);
+        }
+
+        return vertices;
     }
 
     private int[] BuildIndices(int res)
