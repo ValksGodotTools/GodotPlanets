@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Planets;
+﻿namespace Planets;
 
 public class ChunkV2
 {
