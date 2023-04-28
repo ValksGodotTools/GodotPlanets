@@ -4,21 +4,21 @@ public partial class Planet : Node3D
 {
     public override void _Ready()
     {
-        GetViewport().DebugDraw = Viewport.DebugDrawEnum.Overdraw;
+        //GetViewport().DebugDraw = Viewport.DebugDrawEnum.Wireframe;
 
         var icosahedron = new Icosahedron();
         var vertices = icosahedron.Vertices;
         var indices = icosahedron.Triangles;
 
-        var resolution = 512;
+        var resolution = 1;
 
-        for (int i = 0; i < indices.Length; i += 3)
+        for (int i = 0; i < 3; i += 3)
         {
             var posA = vertices[indices[i]];
             var posB = vertices[indices[i + 1]];
             var posC = vertices[indices[i + 2]];
 
-            new Chunk(this, posA, posB, posC, resolution);
+            new ChunkV2(this, posA, posB, posC, resolution);
         }
     }
 }

@@ -1,48 +1,136 @@
 ﻿namespace Planets;
 
+public class ChunkV2
+{
+    private Node Parent { get; set; }
+
+    public ChunkV2(Node parent, Vector3 posA, Vector3 posB, Vector3 posC, int resolution)
+    {
+        Parent = parent;
+
+        var vertices = new List<Vector3>();
+
+        var edgeMidpointsLeft = new List<Vector3>();
+        var edgeMidpointsRight = new List<Vector3>();
+        var edgeMidpointsBottom = new List<Vector3>();
+
+        new DebugPoint(Parent, posA);
+        new DebugPoint(Parent, posB);
+        new DebugPoint(Parent, posC);
+
+        edgeMidpointsRight.AddRange(GenerateEdgeMidPoints(posA, posB, resolution));
+        edgeMidpointsLeft.AddRange(GenerateEdgeMidPoints(posA, posC, resolution));
+        edgeMidpointsBottom.AddRange(GenerateEdgeMidPoints(posB, posC, resolution));
+
+        var centerPoints = new List<Vector3>();
+
+        // Generate center points
+        if (resolution > 1)
+        {
+            for (int row = 1; row < resolution; row++)
+            {
+                for (int i = 0; i < row; i++)
+                {
+                    var t = (float)(i + 1) / (row + 1);
+
+                    var pos = edgeMidpointsLeft[row].Lerp(edgeMidpointsRight[row], t);
+
+                    centerPoints.Add(pos);
+                    new DebugPoint(Parent, pos);
+                }
+            }
+        }
+
+        vertices.Add(posA);
+        vertices.Add(posB);
+        vertices.Add(posC);
+        vertices.AddRange(edgeMidpointsLeft);
+        vertices.AddRange(edgeMidpointsRight);
+        vertices.AddRange(edgeMidpointsBottom);
+        vertices.AddRange(centerPoints);
+
+        var indices = new List<int>();
+
+        if (resolution <= 0)
+        {
+            indices.AddRange(new int[] { 0, 1, 2 });
+        }
+        else
+        {
+
+        }
+
+        var mesh = World3DUtils.CreateMesh(vertices.ToArray(), indices.ToArray());
+
+        Parent.AddChild(new MeshInstance3D
+        {
+            Mesh = mesh
+        });
+    }
+
+    private Vector3[] GenerateEdgeMidPoints(Vector3 posA, Vector3 posB, int resolution)
+    {
+        var points = new Vector3[resolution];
+
+        for (int i = 0; i < resolution; i++)
+        {
+            // Calculate mid points
+            var t = (i + 1f) / (resolution + 1f);
+            var pos = posA.Lerp(posB, t);
+
+            new DebugPoint(Parent, pos);
+
+            points[i] = pos;
+        }
+
+        return points;
+    }
+}
+
 public class Chunk
 {
     public Vector3[] Vertices { get; private set; }
 
     private Dictionary<int, Vector3[]> Edges { get; } = new();
-    private Vector3[] CenterPoints { get; }
+    private Vector3[] CenterPoints { get; set; }
 
-    private int NumMidPoints { get; }
-    private int NumEdgePoints { get; }
+    private int NumMidPoints { get; set; }
+    private int NumEdgePoints { get; set; }
 
-    private int Resolution { get; }
-    private int NumTriangles { get; }
+    private int Resolution { get; set; }
+    private int NumTriangles { get; set; }
 
-    private Node Parent { get; }
+    private Node Parent { get; set; }
 
     public Chunk(Node parent, Vector3 posA, Vector3 posB, Vector3 posC, int resolution)
     {
-        Parent = parent;
+        Logger.LogMs(() =>
+        {
+            Parent = parent;
 
-        // 0 subdivisions is not supported because I'm bad at coding
-        Resolution = Mathf.Max(2, resolution + 1);
+            // 0 subdivisions is not supported because I'm bad at coding
+            Resolution = Mathf.Max(2, resolution + 1);
 
-        NumTriangles = Resolution * Resolution;
+            NumTriangles = Resolution * Resolution;
 
-        NumEdgePoints = Resolution + 1;
-        NumMidPoints = NumEdgePoints - 2;
+            NumEdgePoints = Resolution + 1;
+            NumMidPoints = NumEdgePoints - 2;
 
-        for (int i = 0; i < Edges.Count; i++)
-            Edges[i] = new Vector3[NumEdgePoints];
+            for (int i = 0; i < Edges.Count; i++)
+                Edges[i] = new Vector3[NumEdgePoints];
 
-        Edges[0] = GenerateEdgePoints(posA, posB);
-        Edges[1] = GenerateEdgePoints(posA, posC);
-        Edges[2] = GenerateEdgePoints(posB, posC);
+            Edges[0] = GenerateEdgePoints(posA, posB);
+            Edges[1] = GenerateEdgePoints(posA, posC);
+            Edges[2] = GenerateEdgePoints(posB, posC);
 
-        CenterPoints = GenerateCenterPoints();
+            CenterPoints = GenerateCenterPoints();
 
-        GenerateMesh();
+            GenerateMesh();
+        });
     }
 
     private void GenerateMesh()
     {
-        var rightEdgeIndices = new List<int>();
-
         Vertices = BuildVertices();
         var indices = BuildIndices();
 
