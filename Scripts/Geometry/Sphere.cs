@@ -2,10 +2,12 @@
 
 public class Sphere
 {
+    protected Vector3 Position { get; }
     private SphereMesh Mesh { get; }
 
     public Sphere(Node parent, Vector3 pos)
     {
+        Position = pos;
         Mesh = new();
         parent.AddChild(new MeshInstance3D
         {

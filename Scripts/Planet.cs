@@ -4,13 +4,13 @@ public partial class Planet : Node3D
 {
     public override void _Ready()
     {
-        //GetViewport().DebugDraw = Viewport.DebugDrawEnum.Wireframe;
+        //GetViewport().DebugDraw = Viewport.DebugDrawEnum.Overdraw;
 
         var icosahedron = new Icosahedron();
         var vertices = icosahedron.Vertices;
         var indices = icosahedron.Triangles;
 
-        var resolution = 1;
+        var resolution = 3;
 
         for (int i = 0; i < 3; i += 3)
         {
@@ -25,11 +25,18 @@ public partial class Planet : Node3D
 
 public class DebugPoint : Sphere
 {
-    public DebugPoint(Node parent, Vector3 pos) : base(parent, pos)
+    public DebugPoint(Node parent, Vector3 pos, string text) : base(parent, pos)
     {
         SetRadius(0.03f);
         SetColor(Colors.Green);
         SetRings(8);
         SetRadialSegments(16);
+
+        parent.AddChild(new Label3D
+        {
+            Text = text,
+            Position = Position + new Vector3(0, 0.05f, 0),
+            FontSize = 12
+        });
     }
 }

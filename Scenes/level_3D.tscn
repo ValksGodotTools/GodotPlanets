@@ -35,7 +35,7 @@ script = ExtResource("2_anx2t")
 [node name="Orbit" type="Node3D" parent="CameraController"]
 
 [node name="Camera" type="Camera3D" parent="CameraController/Orbit"]
-transform = Transform3D(1, 0, 1.49012e-07, 0, 1, 0, -1.49012e-07, 0, 1, 0, 0, 1.81597)
+transform = Transform3D(1, 0, 1.49012e-07, 0, 1, 0, -1.49012e-07, 0, 1, 0, 0, 2.10946)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_fx7rt")
