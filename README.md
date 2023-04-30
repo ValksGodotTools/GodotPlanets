@@ -17,8 +17,8 @@ git clone --recursive https://github.com/ValksGodotTools/Template
 
 ## Roadmap
 - Average normals along edges to fix seams (only do this when not using simple normal approach)
-- Textures!
-- Water!
+- Textures / Colors / Biomes!
+- Water (I need someone to help me redesign the water shader to work nicely with a sphere instead of linear plane)
 - Trees!
 - Focal point of view shader!
 - Split the chunks into further chunks!
