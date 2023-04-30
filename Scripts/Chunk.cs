@@ -11,12 +11,41 @@ public class Chunk
         var vertices = BuildVertices(posA, posB, posC, resolution);
         var indices = BuildIndices(resolution);
 
-        var mesh = World3DUtils.CreateMesh(vertices, indices, false);
+        var gMesh = new GMesh(vertices, indices)
+        {
+            SimpleNormals = false,
+            Colors = GenerateColors(vertices)
+        };
 
         Parent.AddChild(new MeshInstance3D
         {
-            Mesh = mesh
+            Mesh = gMesh.Generate(),
+            MaterialOverride = new StandardMaterial3D
+            {
+                VertexColorUseAsAlbedo = true
+            }
         });
+    }
+
+    private Color[] GenerateColors(Vector3[] vertices)
+    {
+        var noise = new FastNoiseLite
+        {
+            Frequency = 0.2f
+        };
+
+        var colors = new Color[vertices.Length];
+        for (int i = 0; i < colors.Length; i++)
+        {
+            var n = 1 + noise.GetNoise3Dv(vertices[i]) * 10;
+
+            if (vertices[i].Length() > 9.5f)
+                colors[i] = new Color("316231"); // grass
+            else
+                colors[i] = new Color(1, 1, 0.73f); // sand
+        }
+
+        return colors;
     }
 
     private Vector3[] BuildVertices(Vector3 posA, Vector3 posB, Vector3 posC, int res)

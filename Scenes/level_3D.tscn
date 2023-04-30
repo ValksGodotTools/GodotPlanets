@@ -1,8 +1,64 @@
-[gd_scene load_steps=7 format=3 uid="uid://bmu34hfw77kcw"]
+[gd_scene load_steps=16 format=3 uid="uid://bmu34hfw77kcw"]
 
 [ext_resource type="Script" path="res://Scripts/Planet.cs" id="1_8qujs"]
 [ext_resource type="PackedScene" uid="uid://c6pism2kgjr5c" path="res://Scenes/Prefabs/popup_menu.tscn" id="1_bhqx1"]
 [ext_resource type="Script" path="res://Scripts/CameraController.cs" id="2_anx2t"]
+[ext_resource type="Shader" path="res://water.gdshader" id="3_rujla"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_tnw6u"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_j176p"]
+seamless = true
+as_normal_map = true
+bump_strength = 2.0
+noise = SubResource("FastNoiseLite_tnw6u")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_60ide"]
+noise_type = 3
+seed = 10
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ygkpg"]
+seamless = true
+as_normal_map = true
+bump_strength = 4.0
+noise = SubResource("FastNoiseLite_60ide")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_fkgku"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_y1cd4"]
+seamless = true
+as_normal_map = true
+bump_strength = 50.0
+noise = SubResource("FastNoiseLite_fkgku")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3ifrl"]
+render_priority = 0
+shader = ExtResource("3_rujla")
+shader_parameter/albedo = Color(0, 0.227451, 0.32549, 1)
+shader_parameter/albedo_fresnel = Color(0, 1, 0.956863, 1)
+shader_parameter/metallic = 0.146
+shader_parameter/roughness = 0.069
+shader_parameter/wave_direction_1 = Vector2(2, 0)
+shader_parameter/wave_direction_2 = Vector2(0, 1)
+shader_parameter/time_scale = 0.005
+shader_parameter/noise_scale = 10.0
+shader_parameter/height_scale = 0.0
+shader_parameter/color_deep = Color(0, 0.0588235, 1, 1)
+shader_parameter/color_shallow = Color(0, 0.227451, 0.32549, 1)
+shader_parameter/beers_law = 2.0
+shader_parameter/depth_offset = 1.401
+shader_parameter/edge_scale = 0.01
+shader_parameter/near = 0.5
+shader_parameter/far = 100.0
+shader_parameter/edge_color = Color(0, 0, 0, 1)
+shader_parameter/wave = SubResource("NoiseTexture2D_y1cd4")
+shader_parameter/texture_normal_1 = SubResource("NoiseTexture2D_j176p")
+shader_parameter/texture_normal_2 = SubResource("NoiseTexture2D_ygkpg")
+
+[sub_resource type="SphereMesh" id="SphereMesh_sg8se"]
+material = SubResource("ShaderMaterial_3ifrl")
+radius = 10.0
+height = 20.0
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_onqla"]
 sky_top_color = Color(0.780392, 0.992157, 1, 1)
@@ -28,6 +84,11 @@ glow_enabled = true
 
 [node name="Planet" type="Node3D" parent="."]
 script = ExtResource("1_8qujs")
+
+[node name="Water" type="MeshInstance3D" parent="Planet"]
+transparency = 0.1
+cast_shadow = 0
+mesh = SubResource("SphereMesh_sg8se")
 
 [node name="CameraController" type="Node3D" parent="."]
 script = ExtResource("2_anx2t")
