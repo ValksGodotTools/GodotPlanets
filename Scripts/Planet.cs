@@ -20,7 +20,7 @@ public partial class Planet : Node3D
                 var posB = vertices[indices[i + 1]];
                 var posC = vertices[indices[i + 2]];
 
-                new ChunkV2(this, posA, posB, posC, resolution);
+                new Chunk(this, posA, posB, posC, resolution);
             }
         });
     }
