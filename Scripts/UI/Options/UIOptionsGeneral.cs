@@ -13,13 +13,13 @@ public partial class UIOptionsGeneral : Control
 
     private void SetupLanguage()
     {
-        var optionButtonLanguage = GetNode<OptionButton>("Language/Language");
+        OptionButton optionButtonLanguage = GetNode<OptionButton>("Language/Language");
         optionButtonLanguage.Select((int)Options.Language);
     }
 
     private void _on_language_item_selected(int index)
     {
-        var locale = ((Language)index).ToString().Substring(0, 2).ToLower();
+        string locale = ((Language)index).ToString().Substring(0, 2).ToLower();
 
         TranslationServer.SetLocale(locale);
 

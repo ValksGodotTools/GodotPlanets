@@ -14,13 +14,13 @@ public partial class UIOptionsAudio : Control
 
     private void SetupMusic()
     {
-        var slider = GetNode<HSlider>("Music/Music");
+        HSlider slider = GetNode<HSlider>("Music/Music");
         slider.Value = Options.MusicVolume;
     }
 
     private void SetupSounds()
     {
-        var slider = GetNode<HSlider>("Sounds/Sounds");
+        HSlider slider = GetNode<HSlider>("Sounds/Sounds");
         slider.Value = Options.SFXVolume;
     }
 

@@ -41,10 +41,7 @@ public partial class UIOptionsDisplay : Control
         SliderMaxFPS = GetNode<HSlider>("MaxFPS/HBox/MaxFPS");
         SliderMaxFPS.Value = Options.MaxFPS;
 
-        if (Options.VSyncMode != DisplayServer.VSyncMode.Disabled)
-            SliderMaxFPS.Editable = false;
-        else
-            SliderMaxFPS.Editable = true;
+        SliderMaxFPS.Editable = Options.VSyncMode == VSyncMode.Disabled;
     }
 
     private void SetupWindowSize()
@@ -52,7 +49,7 @@ public partial class UIOptionsDisplay : Control
         ResX = GetNode<LineEdit>("WindowSize/HBox/WindowWidth");
         ResY = GetNode<LineEdit>("WindowSize/HBox/WindowHeight");
 
-        var winSize = DisplayServer.WindowGetSize();
+        Vector2I winSize = DisplayServer.WindowGetSize();
 
         PrevNumX = winSize.X;
         PrevNumY = winSize.Y;
@@ -81,8 +78,8 @@ public partial class UIOptionsDisplay : Control
         DisplayServer.WindowSetSize(new Vector2I(PrevNumX, PrevNumY));
 
         // Center window
-        var winSize = DisplayServer.WindowGetSize();
-        DisplayServer.WindowSetPosition(DisplayServer.ScreenGetSize() / 2 - winSize / 2);
+        Vector2I winSize = DisplayServer.WindowGetSize();
+        DisplayServer.WindowSetPosition((DisplayServer.ScreenGetSize() / 2) - (winSize / 2));
 
         OptionsManager.Options.WindowSize = winSize;
     }
@@ -106,7 +103,7 @@ public partial class UIOptionsDisplay : Control
         }
 
         // Update UIWindowSize element on window mode change
-        var winSize = DisplayServer.WindowGetSize();
+        Vector2I winSize = DisplayServer.WindowGetSize();
 
         ResX.Text = winSize.X + "";
         ResY.Text = winSize.Y + "";
@@ -138,14 +135,11 @@ public partial class UIOptionsDisplay : Control
 
     private void _on_v_sync_mode_item_selected(int index)
     {
-        var vsyncMode = (DisplayServer.VSyncMode)index;
+        VSyncMode vsyncMode = (DisplayServer.VSyncMode)index;
         DisplayServer.WindowSetVsyncMode(vsyncMode);
         Options.VSyncMode = vsyncMode;
 
-        if (Options.VSyncMode != DisplayServer.VSyncMode.Disabled)
-            SliderMaxFPS.Editable = false;
-        else
-            SliderMaxFPS.Editable = true;
+        SliderMaxFPS.Editable = Options.VSyncMode == VSyncMode.Disabled;
     }
 
     private void _on_max_fps_value_changed(float value)

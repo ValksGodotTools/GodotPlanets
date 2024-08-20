@@ -7,7 +7,7 @@ public class Icosahedron
 
     public Icosahedron(float radius = 1)
     {
-        var t = (1.0f + Mathf.Sqrt(5.0f)) / 2.0f;
+        float t = (1.0f + Mathf.Sqrt(5.0f)) / 2.0f;
 
         Vertices = new Vector3[]
         {

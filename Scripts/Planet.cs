@@ -6,19 +6,19 @@ public partial class Planet : Node3D
     {
         //GetViewport().DebugDraw = Viewport.DebugDrawEnum.Overdraw;
 
-        var icosahedron = new Icosahedron();
-        var vertices = icosahedron.Vertices;
-        var indices = icosahedron.Triangles;
+        Icosahedron icosahedron = new();
+        Vector3[] vertices = icosahedron.Vertices;
+        int[] indices = icosahedron.Triangles;
 
-        var resolution = 128;
+        int resolution = 128;
 
         Logger.LogMs(() =>
         {
             for (int i = 0; i < indices.Length; i += 3)
             {
-                var posA = vertices[indices[i]];
-                var posB = vertices[indices[i + 1]];
-                var posC = vertices[indices[i + 2]];
+                Vector3 posA = vertices[indices[i]];
+                Vector3 posB = vertices[indices[i + 1]];
+                Vector3 posC = vertices[indices[i + 2]];
 
                 new Chunk(this, posA, posB, posC, resolution);
             }

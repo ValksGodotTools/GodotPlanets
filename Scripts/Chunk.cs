@@ -8,10 +8,10 @@ public class Chunk
     {
         Parent = parent;
 
-        var vertices = BuildVertices(posA, posB, posC, resolution);
-        var indices = BuildIndices(resolution);
+        Vector3[] vertices = BuildVertices(posA, posB, posC, resolution);
+        int[] indices = BuildIndices(resolution);
 
-        var gMesh = new GMesh(vertices, indices)
+        GMesh gMesh = new(vertices, indices)
         {
             SimpleNormals = false,
             Colors = GenerateColors(vertices)
@@ -29,15 +29,15 @@ public class Chunk
 
     private Color[] GenerateColors(Vector3[] vertices)
     {
-        var noise = new FastNoiseLite
+        FastNoiseLite noise = new()
         {
             Frequency = 0.2f
         };
 
-        var colors = new Color[vertices.Length];
+        Color[] colors = new Color[vertices.Length];
         for (int i = 0; i < colors.Length; i++)
         {
-            var n = 1 + noise.GetNoise3Dv(vertices[i]) * 10;
+            float n = 1 + (noise.GetNoise3Dv(vertices[i]) * 10);
 
             if (vertices[i].Length() > 9.5f)
                 colors[i] = new Color("316231"); // grass
@@ -50,18 +50,19 @@ public class Chunk
 
     private Vector3[] BuildVertices(Vector3 posA, Vector3 posB, Vector3 posC, int res)
     {
-        var vertices = new List<Vector3>();
-
-        // The 3 main corners
-        vertices.Add(posA);
-        vertices.Add(posB);
-        vertices.Add(posC);
+        List<Vector3> vertices = new()
+        {
+            // The 3 main corners
+            posA,
+            posB,
+            posC
+        };
 
         // The edge midpoints
         if (res >= 1)
         {
-            var edgeMidpointsLeft = GenerateEdgeMidPoints(posA, posC, res);
-            var edgeMidpointsRight = GenerateEdgeMidPoints(posA, posB, res);
+            Vector3[] edgeMidpointsLeft = GenerateEdgeMidPoints(posA, posC, res);
+            Vector3[] edgeMidpointsRight = GenerateEdgeMidPoints(posA, posB, res);
 
             vertices.AddRange(edgeMidpointsLeft); // left
             vertices.AddRange(edgeMidpointsRight); // right
@@ -79,17 +80,17 @@ public class Chunk
 
     private List<Vector3> DeformVertices(List<Vector3> vertices)
     {
-        var noise = new FastNoiseLite
+        FastNoiseLite noise = new()
         {
             Frequency = 0.003f
         };
 
-        var noiseStrength = 1000;
-        var planetRadius = 10;
+        int noiseStrength = 1000;
+        int planetRadius = 10;
 
         for (int i = 0; i < vertices.Count; i++)
         {
-            var n = noise.GetNoise3Dv(vertices[i] * noiseStrength);
+            float n = noise.GetNoise3Dv(vertices[i] * noiseStrength);
 
             vertices[i] = vertices[i].Normalized() * (planetRadius + n);
         }
@@ -99,7 +100,7 @@ public class Chunk
 
     private int[] BuildIndices(int res)
     {
-        var indices = new List<int>();
+        List<int> indices = new();
 
         // If the resolution is 0 then there are no midpoints and thus there
         // is only 1 triangle
@@ -111,24 +112,24 @@ public class Chunk
 
         // Index Legend
         // The 3 main corners
-        var topMiddle = 0;
-        var bottomRight = 1;
-        var bottomLeft = 2;
+        int topMiddle = 0;
+        int bottomRight = 1;
+        int bottomLeft = 2;
 
         // The first point in each midpoint array
-        var leftFirst = 3; // top left
-        var rightFirst = 3 + res; // top right
-        var bottomFirst = 3 + res * 2; // bottom right
+        int leftFirst = 3; // top left
+        int rightFirst = 3 + res; // top right
+        int bottomFirst = 3 + (res * 2); // bottom right
 
         // The center points
-        var center = 3 + res * 3;
+        int center = 3 + (res * 3);
         var centerBottomRight = center + GUMath.SumNaturalNumbers(res) - 1;
         var centerBottomLeft = centerBottomRight - res + 2;
 
         // The last point in each midpoint array
-        var leftLast = rightFirst - 1;
-        var rightLast = bottomFirst - 1;
-        var bottomLast = 3 + res * 3 - 1;
+        int leftLast = rightFirst - 1;
+        int rightLast = bottomFirst - 1;
+        int bottomLast = 3 + (res * 3) - 1;
 
         // Resolution can be greater than or equal to 1 here
         // Draw the corner triangles
@@ -148,9 +149,9 @@ public class Chunk
             indices.AddRange(new int[] { centerBottomRight, rightLast, bottomFirst });
 
             // Draw the outer edge triangles
-            var triOuterEdgeRight = IndicesOuterEdgeRight(res, rightFirst, center);
-            var triOuterEdgeLeft  = IndicesOuterEdgeLeft(res, leftFirst, center);
-            var triOuterBottom    = IndicesOuterBottom(res, bottomFirst, centerBottomRight);
+            List<int> triOuterEdgeRight = IndicesOuterEdgeRight(res, rightFirst, center);
+            List<int> triOuterEdgeLeft  = IndicesOuterEdgeLeft(res, leftFirst, center);
+            List<int> triOuterBottom    = IndicesOuterBottom(res, bottomFirst, centerBottomRight);
             
             indices.AddRange(triOuterEdgeRight);
             indices.AddRange(triOuterEdgeLeft);
@@ -160,7 +161,7 @@ public class Chunk
         if (res >= 3)
         {
             // Draw the center triangles
-            var triCenter = IndicesCenter(res, center);
+            List<int> triCenter = IndicesCenter(res, center);
 
             indices.AddRange(triCenter);
         }
@@ -170,7 +171,7 @@ public class Chunk
 
     private List<int> IndicesOuterEdgeRight(int res, int rightFirst, int center)
     {
-        var indices = new List<int>();
+        List<int> indices = new();
 
         // Outer Right Edge Triangles
         // Upside
@@ -200,7 +201,7 @@ public class Chunk
 
     private List<int> IndicesOuterEdgeLeft(int res, int leftFirst, int center)
     {
-        var indices = new List<int>();
+        List<int> indices = new();
 
         // Outer Left Edge Triangles
         // Upside
@@ -230,7 +231,7 @@ public class Chunk
 
     private List<int> IndicesOuterBottom(int res, int bottomFirst, int centerBottomRight)
     {
-        var indices = new List<int>();
+        List<int> indices = new();
 
         // Outer Bottom Edge Triangles
         // Upside
@@ -260,7 +261,7 @@ public class Chunk
 
     private List<int> IndicesCenter(int res, int center)
     {
-        var indices = new List<int>();
+        List<int> indices = new();
 
         // Center Triangles
         // Upside
@@ -304,17 +305,17 @@ public class Chunk
 
     private Vector3[] GenerateCenterPoints(Vector3[] edgeMidpointsLeft, Vector3[] edgeMidpointsRight, int resolution)
     {
-        var centerPoints = new Vector3[GUMath.SumNaturalNumbers(resolution)];
-        
-        var index = 0;
+        Vector3[] centerPoints = new Vector3[GUMath.SumNaturalNumbers(resolution)];
+
+        int index = 0;
 
         for (int row = 1; row < resolution; row++)
         {
             for (int i = 0; i < row; i++)
             {
-                var t = (float)(i + 1) / (row + 1);
+                float t = (float)(i + 1) / (row + 1);
 
-                var pos = edgeMidpointsLeft[row].Lerp(edgeMidpointsRight[row], t);
+                Vector3 pos = edgeMidpointsLeft[row].Lerp(edgeMidpointsRight[row], t);
 
                 centerPoints[index++] = pos;
             }
@@ -325,13 +326,13 @@ public class Chunk
 
     private Vector3[] GenerateEdgeMidPoints(Vector3 posA, Vector3 posB, int resolution)
     {
-        var points = new Vector3[resolution];
+        Vector3[] points = new Vector3[resolution];
 
         for (int i = 0; i < resolution; i++)
         {
             // Calculate mid points
-            var t = (i + 1f) / (resolution + 1f);
-            var pos = posA.Lerp(posB, t);
+            float t = (i + 1f) / (resolution + 1f);
+            Vector3 pos = posA.Lerp(posB, t);
 
             points[i] = pos;
         }

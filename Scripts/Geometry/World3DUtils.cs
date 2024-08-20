@@ -5,8 +5,8 @@ public class GMesh
     public bool SimpleNormals { get; set; }
     public Color[] Colors { get; set; }
 
-    private Vector3[] vertices;
-    private int[] indices;
+    private readonly Vector3[] vertices;
+    private readonly int[] indices;
 
     public GMesh(Vector3[] vertices, int[] indices)
     {
@@ -19,11 +19,11 @@ public class GMesh
 
     private Mesh GenerateWithSimpleNormals()
     {
-        var arrays = new Godot.Collections.Array();
+        Godot.Collections.Array arrays = new();
         arrays.Resize((int)Mesh.ArrayType.Max);
         arrays[(int)Mesh.ArrayType.Vertex] = vertices;
 
-        var normals = new Vector3[vertices.Length];
+        Vector3[] normals = new Vector3[vertices.Length];
 
         for (int i = 0; i < normals.Length; i++)
             normals[i] = vertices[i].Normalized();
@@ -36,7 +36,7 @@ public class GMesh
 
         arrays[(int)Mesh.ArrayType.Index] = indices;
 
-        var mesh = new ArrayMesh();
+        ArrayMesh mesh = new();
         mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
 
         return mesh;
@@ -44,7 +44,7 @@ public class GMesh
 
     private Mesh GenerateWithComplexNormals()
     {
-        var st = new SurfaceTool();
+        SurfaceTool st = new();
         st.Begin(Mesh.PrimitiveType.Triangles);
 
         for (int i = 0; i < vertices.Length; i++)
@@ -55,7 +55,7 @@ public class GMesh
             st.AddVertex(vertices[i]);
         }
 
-        foreach (var index in indices)
+        foreach (int index in indices)
             st.AddIndex(index);
 
         st.GenerateNormals();

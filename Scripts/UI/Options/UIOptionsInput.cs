@@ -20,7 +20,7 @@ public partial class UIOptionsInput : Control
         {
             if (Input.IsActionJustPressed("remove_hotkey"))
             {
-                var action = BtnNewInput.Action;
+                StringName action = BtnNewInput.Action;
 
                 // Update input map
                 InputMap.ActionEraseEvent(action, BtnNewInput.InputEvent);
@@ -74,7 +74,7 @@ public partial class UIOptionsInput : Control
 
     private void HandleInput(InputEvent @event)
     {
-        var action = BtnNewInput.Action;
+        StringName action = BtnNewInput.Action;
 
         // Prevent something very evil from happening!
         if (action == "fullscreen" && @event is InputEventMouseButton eventBtn)
@@ -83,19 +83,19 @@ public partial class UIOptionsInput : Control
         // Re-create the button
 
         // Preserve the index the button was originally at
-        var index = BtnNewInput.Btn.GetIndex();
+        int index = BtnNewInput.Btn.GetIndex();
 
         // Destroy the button
         BtnNewInput.Btn.QueueFree();
 
         // Create the button
-        var btn = CreateButton(action, @event, BtnNewInput.HBox);
+        Button btn = CreateButton(action, @event, BtnNewInput.HBox);
         btn.Disabled = false;
 
         // Move the button to where it was originally at
         BtnNewInput.HBox.MoveChild(btn, index);
 
-        var actions = OptionsManager.Hotkeys.Actions;
+        Dictionary<StringName, Array<InputEvent>> actions = OptionsManager.Hotkeys.Actions;
 
         // Clear the specific action event
         actions[action].Remove(BtnNewInput.InputEvent);
@@ -115,7 +115,7 @@ public partial class UIOptionsInput : Control
 
     private Button CreateButton(string action, InputEvent inputEvent, HBoxContainer hbox)
     {
-        var readable = "";
+        string readable = "";
 
         if (inputEvent is InputEventKey key)
         {
@@ -188,9 +188,9 @@ public partial class UIOptionsInput : Control
     private void CreateHotkeys()
     {
         // Loop through the actions in alphabetical order
-        foreach (var action in OptionsManager.Hotkeys.Actions.Keys.OrderBy(x => x.ToString()))
+        foreach (StringName action in OptionsManager.Hotkeys.Actions.Keys.OrderBy(x => x.ToString()))
         {
-            var actionStr = action.ToString();
+            string actionStr = action.ToString();
 
             // Exlucde "remove_hotkey" action
             if (actionStr == "remove_hotkey")
@@ -200,10 +200,10 @@ public partial class UIOptionsInput : Control
             if (actionStr.StartsWith("ui"))
                 continue;
 
-            var hbox = new HBoxContainer();
+            HBoxContainer hbox = new();
 
             // For example convert ui_left to UI_LEFT
-            var name = action.ToString().ToUpper();
+            string name = action.ToString().ToUpper();
 
             // Add the action label. For example 'UI Left'
             hbox.AddChild(new GLabel(name)
@@ -213,11 +213,11 @@ public partial class UIOptionsInput : Control
             });
 
             // Add all the events after the action label
-            var hboxEvents = new HBoxContainer();
+            HBoxContainer hboxEvents = new();
 
-            var events = OptionsManager.Hotkeys.Actions[action];
+            Array<InputEvent> events = OptionsManager.Hotkeys.Actions[action];
 
-            foreach (var @event in events)
+            foreach (InputEvent @event in events)
             {
                 // Handle keys
                 if (@event is InputEventKey eventKey)

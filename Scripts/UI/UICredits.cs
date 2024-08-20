@@ -19,15 +19,15 @@ public partial class UICredits : Node
             SizeFlagsVertical = Control.SizeFlags.ShrinkBegin
         };
 
-        var file = FileAccess.Open("res://credits.txt", FileAccess.ModeFlags.Read);
+        FileAccess file = FileAccess.Open("res://credits.txt", FileAccess.ModeFlags.Read);
 
         while (!file.EofReached())
         {
-            var line = Tr(file.GetLine());
+            string line = Tr(file.GetLine());
 
-            var translatedLine = "";
+            string translatedLine = "";
 
-            foreach (var word in line.Split(' '))
+            foreach (string word in line.Split(' '))
                 translatedLine += Tr(word) + " ";
 
             if (translatedLine.Contains("http"))
@@ -44,13 +44,13 @@ public partial class UICredits : Node
         AddChild(VBox);
 
         VBox.Position = new Vector2(
-            DisplayServer.WindowGetSize().X / 2 - VBox.Size.X / 2,
+            (DisplayServer.WindowGetSize().X / 2) - (VBox.Size.X / 2),
             DisplayServer.WindowGetSize().Y);
     }
 
     public override void _PhysicsProcess(double delta)
     {
-        var pos = VBox.Position;
+        Vector2 pos = VBox.Position;
         pos.Y -= Speed;
         VBox.Position = pos;
 
@@ -72,12 +72,12 @@ public partial class UICredits : Node
 
     private void AddTextWithLink(string text)
     {
-        var indexOfHttp = text.IndexOf("http");
+        int indexOfHttp = text.IndexOf("http");
 
-        var textDesc = text.Substring(0, indexOfHttp);
-        var textLink = text.Substring(indexOfHttp);
+        string textDesc = text.Substring(0, indexOfHttp);
+        string textLink = text.Substring(indexOfHttp);
 
-        var hbox = new HBoxContainer
+        HBoxContainer hbox = new()
         {
             SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter
         };
@@ -109,7 +109,7 @@ public partial class UICredits : Node
 
     private void _on_speed_pressed()
     {
-        var numSpeeds = 3;
+        int numSpeeds = 3;
 
         for (int i = 1; i < numSpeeds; i++)
             if (Speed == i)

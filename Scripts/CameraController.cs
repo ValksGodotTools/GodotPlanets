@@ -42,9 +42,9 @@ public partial class CameraController : Node3D
         if (!HoldingLeftClick)
             return;
 
-        var vel = motion.Relative * Sensitivity;
+        Vector2 vel = motion.Relative * Sensitivity;
 
-        var rot = Rotation;
+        Vector3 rot = Rotation;
 
         rot.X -= vel.Y;
         rot.Y -= vel.X;
