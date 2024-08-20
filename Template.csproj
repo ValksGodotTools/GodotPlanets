@@ -1,10 +1,10 @@
-﻿<Project Sdk="Godot.NET.Sdk/4.0.0">
+﻿<Project Sdk="Godot.NET.Sdk/4.3.0">
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <LangVersion>11</LangVersion>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <DefineConstants>PLANETS</DefineConstants>
-	<RootNamespace>Planets</RootNamespace>
+    <RootNamespace>Planets</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="GodotUtils\Snippets\VS2022\ExportNodePath.snippet" />
