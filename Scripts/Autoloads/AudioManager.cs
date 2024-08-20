@@ -112,6 +112,6 @@ public partial class AudioManager : Node
         SFXPlayersParent = new Node();
         AddChild(SFXPlayersParent);
 
-        PlayMusic(Music.Menu);
+        //PlayMusic(Music.Menu);
     }
 }

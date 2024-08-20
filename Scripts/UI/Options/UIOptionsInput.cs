@@ -64,7 +64,7 @@ public partial class UIOptionsInput : Control
                 {
                     if (BtnNewInput == null)
                     {
-                        AudioManager.PlayMusic(Music.Menu);
+                        //AudioManager.PlayMusic(Music.Menu);
                         SceneManager.SwitchScene("main_menu");
                     }
                 }

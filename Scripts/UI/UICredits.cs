@@ -56,7 +56,7 @@ public partial class UICredits : Node
 
         if (pos.Y <= -VBox.Size.Y)
         {
-            AudioManager.PlayMusic(Music.Menu);
+            //AudioManager.PlayMusic(Music.Menu);
             SceneManager.SwitchScene("main_menu");
         }
     }
@@ -65,7 +65,7 @@ public partial class UICredits : Node
     {
         if (Input.IsActionJustPressed("ui_cancel"))
         {
-            AudioManager.PlayMusic(Music.Menu);
+            //AudioManager.PlayMusic(Music.Menu);
             SceneManager.SwitchScene("main_menu");
         }
     }
