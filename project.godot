@@ -12,16 +12,9 @@ config_version=5
 
 config/name="Godot Planets"
 run/main_scene="res://Scenes/level_3D.tscn"
-config/features=PackedStringArray("4.3", "C#", "Forward Plus")
+config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 boot_splash/show_image=false
 config/icon="res://Sprites/icon.svg"
-
-[autoload]
-
-Global="*res://Scripts/Autoloads/global.tscn"
-OptionsManager="*res://Scripts/Autoloads/OptionsManager.cs"
-AudioManager="*res://Scripts/Autoloads/audio_manager.tscn"
-SceneManager="*res://GodotUtils/Scripts/Autoload/SceneManager.cs"
 
 [dotnet]
 
@@ -84,10 +77,6 @@ remove_hotkey={
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194312,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 ]
 }
-
-[internationalization]
-
-locale/translations=PackedStringArray("res://Localisation/text.en.translation", "res://Localisation/text.fr.translation", "res://Localisation/text.ja.translation")
 
 [rendering]
 

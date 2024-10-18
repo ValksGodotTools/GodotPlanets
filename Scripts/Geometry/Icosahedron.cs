@@ -1,4 +1,6 @@
-﻿namespace Planets;
+﻿using Godot;
+
+namespace Planets;
 
 public class Icosahedron
 {
@@ -9,8 +11,8 @@ public class Icosahedron
     {
         float t = (1.0f + Mathf.Sqrt(5.0f)) / 2.0f;
 
-        Vertices = new Vector3[]
-        {
+        Vertices =
+        [
             new Vector3(-1,  t,  0).Normalized() * radius,
             new Vector3( 1,  t,  0).Normalized() * radius,
             new Vector3(-1, -t,  0).Normalized() * radius,
@@ -23,9 +25,9 @@ public class Icosahedron
             new Vector3( t,  0,  1).Normalized() * radius,
             new Vector3(-t,  0, -1).Normalized() * radius,
             new Vector3(-t,  0,  1).Normalized() * radius
-        };
+        ];
 
-        Triangles = new int[] {
+        Triangles = [
             0, 5, 11,
             0, 1, 5,
             0, 7, 1,
@@ -46,6 +48,6 @@ public class Icosahedron
             6, 10, 2,
             8, 7, 6,
             9, 1, 8
-        };
+        ];
     }
 }

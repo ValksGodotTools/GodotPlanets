@@ -1,7 +1,6 @@
-[gd_scene load_steps=16 format=3 uid="uid://bmu34hfw77kcw"]
+[gd_scene load_steps=15 format=3 uid="uid://bmu34hfw77kcw"]
 
 [ext_resource type="Script" path="res://Scripts/Planet.cs" id="1_8qujs"]
-[ext_resource type="PackedScene" uid="uid://c6pism2kgjr5c" path="res://Scenes/Prefabs/popup_menu.tscn" id="1_bhqx1"]
 [ext_resource type="Script" path="res://Scripts/CameraController.cs" id="2_anx2t"]
 [ext_resource type="Shader" path="res://water.gdshader" id="3_rujla"]
 
@@ -38,6 +37,9 @@ shader_parameter/albedo = Color(0, 0.227451, 0.32549, 1)
 shader_parameter/albedo_fresnel = Color(0, 1, 0.956863, 1)
 shader_parameter/metallic = 0.146
 shader_parameter/roughness = 0.069
+shader_parameter/wave = SubResource("NoiseTexture2D_y1cd4")
+shader_parameter/texture_normal_1 = SubResource("NoiseTexture2D_j176p")
+shader_parameter/texture_normal_2 = SubResource("NoiseTexture2D_ygkpg")
 shader_parameter/wave_direction_1 = Vector2(2, 0)
 shader_parameter/wave_direction_2 = Vector2(0, 1)
 shader_parameter/time_scale = 0.005
@@ -51,9 +53,6 @@ shader_parameter/edge_scale = 0.01
 shader_parameter/near = 0.5
 shader_parameter/far = 100.0
 shader_parameter/edge_color = Color(0, 0, 0, 1)
-shader_parameter/wave = SubResource("NoiseTexture2D_y1cd4")
-shader_parameter/texture_normal_1 = SubResource("NoiseTexture2D_j176p")
-shader_parameter/texture_normal_2 = SubResource("NoiseTexture2D_ygkpg")
 
 [sub_resource type="SphereMesh" id="SphereMesh_sg8se"]
 material = SubResource("ShaderMaterial_3ifrl")
@@ -103,7 +102,3 @@ environment = SubResource("Environment_fx7rt")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 0, 0)
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="popup_menu" parent="CanvasLayer" instance=ExtResource("1_bhqx1")]

@@ -1,4 +1,6 @@
-﻿namespace Planets;
+﻿using Godot;
+
+namespace Planets;
 
 public class DebugPoint : Sphere
 {
@@ -12,7 +14,7 @@ public class DebugPoint : Sphere
         parent.AddChild(new Label3D
         {
             Text = text,
-            Position = Position + new Vector3(0, 0.05f, 0),
+            Position = _position + new Vector3(0, 0.05f, 0),
             FontSize = 12
         });
     }

@@ -1,24 +1,28 @@
-﻿namespace Planets;
+﻿using Godot;
+
+namespace Planets;
 
 public class Sphere
 {
-    protected Vector3 Position { get; }
-    private SphereMesh Mesh { get; }
+    protected Vector3 _position;
+
+    private readonly SphereMesh _mesh;
 
     public Sphere(Node parent, Vector3 pos)
     {
-        Position = pos;
-        Mesh = new();
+        _position = pos;
+        _mesh = new();
+        
         parent.AddChild(new MeshInstance3D
         {
-            Mesh = Mesh,
+            Mesh = _mesh,
             Position = pos
         });
     }
 
     public Sphere SetColor(Color color)
     {
-        Mesh.Material = new StandardMaterial3D
+        _mesh.Material = new StandardMaterial3D
         {
             AlbedoColor = color
         };
@@ -28,22 +32,22 @@ public class Sphere
 
     public Sphere SetRadius(float radius)
     {
-        Mesh.Radius = radius;
-        Mesh.Height = radius * 2;
+        _mesh.Radius = radius;
+        _mesh.Height = radius * 2;
 
         return this;
     }
 
     public Sphere SetRings(int rings)
     {
-        Mesh.Rings = rings;
+        _mesh.Rings = rings;
 
         return this;
     }
 
     public Sphere SetRadialSegments(int segments)
     {
-        Mesh.RadialSegments = Mathf.Max(4, segments);
+        _mesh.RadialSegments = Mathf.Max(4, segments);
 
         return this;
     }
